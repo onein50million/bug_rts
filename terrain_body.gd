@@ -29,18 +29,7 @@ func noise(x: Vector2) -> float:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var heightmap:HeightMapShape = $CollisionShape.shape
-	for x_index in range(heightmap.map_width):
-		for y_index in range(heightmap.map_depth):
-			var x = float(x_index) - float(heightmap.map_width) * 0.5
-			var y = float(y_index) - float(heightmap.map_depth) *  0.5
 
-			var local_position = Vector3(x,y,0.0)
-			var world_position = transform * local_position
-
-			var height = noise(Vector2(world_position.x,world_position.y)*0.1)* 0.000000001
-			print(height)
-			heightmap.map_data[x_index + y_index * heightmap.map_width] = height 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
