@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/aerial_beach_01_rough_4k.jpg-986fd918e86b3ec9263d5b0f7b273a67.s3tc.stex"
-path.etc2="res://.import/aerial_beach_01_rough_4k.jpg-986fd918e86b3ec9263d5b0f7b273a67.etc2.stex"
+path.s3tc="res://.import/eyes.png-cc613054ce0206c03cde76d6321435cb.s3tc.stex"
+path.etc2="res://.import/eyes.png-cc613054ce0206c03cde76d6321435cb.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://textures/sand/aerial_beach_01_rough_4k.jpg"
-dest_files=[ "res://.import/aerial_beach_01_rough_4k.jpg-986fd918e86b3ec9263d5b0f7b273a67.s3tc.stex", "res://.import/aerial_beach_01_rough_4k.jpg-986fd918e86b3ec9263d5b0f7b273a67.etc2.stex" ]
+source_file="res://textures/skin2/eyes.png"
+dest_files=[ "res://.import/eyes.png-cc613054ce0206c03cde76d6321435cb.s3tc.stex", "res://.import/eyes.png-cc613054ce0206c03cde76d6321435cb.etc2.stex" ]
 
 [params]
 
@@ -25,7 +25,7 @@ flags/repeat=true
 flags/filter=true
 flags/mipmaps=true
 flags/anisotropic=false
-flags/srgb=2
+flags/srgb=1
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false

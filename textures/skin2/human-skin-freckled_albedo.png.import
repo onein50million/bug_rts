@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/aerial_beach_01_diff_4k.jpg-933d6ca8731ef674c176ae4a3c70d6e1.s3tc.stex"
-path.etc2="res://.import/aerial_beach_01_diff_4k.jpg-933d6ca8731ef674c176ae4a3c70d6e1.etc2.stex"
+path.s3tc="res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.s3tc.stex"
+path.etc2="res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://textures/sand/aerial_beach_01_diff_4k.jpg"
-dest_files=[ "res://.import/aerial_beach_01_diff_4k.jpg-933d6ca8731ef674c176ae4a3c70d6e1.s3tc.stex", "res://.import/aerial_beach_01_diff_4k.jpg-933d6ca8731ef674c176ae4a3c70d6e1.etc2.stex" ]
+source_file="res://textures/skin2/human-skin-freckled_albedo.png"
+dest_files=[ "res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.s3tc.stex", "res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.etc2.stex" ]
 
 [params]
 
