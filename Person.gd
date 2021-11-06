@@ -19,6 +19,8 @@ var camera: Camera
 var surface_tool: SurfaceTool
 var mesh_tool: MeshDataTool
 
+onready var physics_space_state = get_world().direct_space_state
+
 onready var face_helper = preload("res://dll/BugRtsLib.gdns").new()
 
 var units = []
@@ -40,6 +42,15 @@ class FaceData:
 		self.index = _index
 		self.position = _position
 	
+	
+func project_point(face_index: int, point: Vector3) -> Vector3:
+	var p1 = mesh_tool.get_vertex(mesh_tool.get_face_vertex(face_index,0))
+	var p2 = mesh_tool.get_vertex(mesh_tool.get_face_vertex(face_index,1))
+	var p3 = mesh_tool.get_vertex(mesh_tool.get_face_vertex(face_index,2))
+
+	var plane = Plane(p1,p2,p3)
+	return plane.project(point)
+
 func is_inside_triangle(point: Vector3, face_index: int):
 	#https://math.stackexchange.com/a/544947
 	#barycentric coordinates
@@ -57,6 +68,19 @@ func select_units(selection_box: Rect2):
 		var viewport_position = camera.unproject_position(unit.transform.origin)
 		unit.is_selected = selection_box.has_point(viewport_position)
 
+func _input(event):
+	if event.is_action_released("move"):
+		var ray_origin = camera.project_ray_origin(get_viewport().get_mouse_position())
+		var ray_normal = camera.project_ray_normal(get_viewport().get_mouse_position())
+
+		var raycast_result = physics_space_state.intersect_ray(ray_origin,ray_origin + ray_normal * 1e6)
+		if raycast_result.empty():
+			print("no hits")
+			return
+		var new_target = raycast_result.position
+		print(new_target)
+		for unit in units:
+			unit.new_orders(new_target)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -72,7 +96,7 @@ func _ready():
 	
 	units.append(get_parent().get_node("bug"))
 	var spread = 100.0
-	for i in range(1000):
+	for i in range(100):
 		var new_unit = bug_scene.instance()
 		new_unit.transform.origin = Vector3(rand_range(-spread, spread),rand_range(-spread, spread),rand_range(-spread, spread))
 		units.append(new_unit)

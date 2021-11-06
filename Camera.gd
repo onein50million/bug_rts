@@ -19,6 +19,7 @@ func _ready():
 	pass
 
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	var target = get_node(target_path)
@@ -38,5 +39,6 @@ func _process(delta):
 	var angular_size = 2.0 * atan2(car_size, 2.0 * distance_to_car)
 	var new_fov = rad2deg(angular_size*zoom_ratio)
 	set_perspective(new_fov, near, far)
+	
 	
 
