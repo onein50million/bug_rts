@@ -49,6 +49,7 @@ target_path = NodePath("../bug")
 [node name="bug" parent="." instance=ExtResource( 2 )]
 
 [node name="SelectionBox" type="ColorRect" parent="."]
+visible = false
 margin_right = 317.0
 margin_bottom = 274.0
 color = Color( 1, 1, 1, 0.196078 )

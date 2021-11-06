@@ -46,9 +46,7 @@ func _ready():
 func _process(delta):
 	
 	if is_selected:
-		print("selected!")
 		$MeshInstance.get_active_material(0).albedo_color = Color(1.0,0.2,0.2,1.0)
-		print($MeshInstance.get_active_material(0).albedo_color)
 	else:
 		$MeshInstance.get_active_material(0).albedo_color = Color(1.0,1.0,1.0,1.0)
 	
