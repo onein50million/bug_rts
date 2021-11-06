@@ -16,6 +16,7 @@ panorama = ExtResource( 1 )
 background_mode = 2
 background_sky = SubResource( 1 )
 auto_exposure_enabled = true
+auto_exposure_speed = 1.0
 dof_blur_far_transition = 0.2
 dof_blur_far_quality = 2
 dof_blur_near_quality = 2

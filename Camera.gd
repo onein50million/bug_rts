@@ -23,8 +23,8 @@ func _ready():
 func _process(delta):
 	var target = get_node(target_path)
 	
-	height += (int(Input.is_action_pressed("camera_up")) - int(Input.is_action_pressed("camera_down"))) * 0.1
-	gimbal_angle += (int(Input.is_action_pressed("camera_right")) - int(Input.is_action_pressed("camera_left"))) * 0.005
+	height += (int(Input.is_action_pressed("camera_up")) - int(Input.is_action_pressed("camera_down"))) * 20.0 * delta
+	gimbal_angle += (int(Input.is_action_pressed("camera_right")) - int(Input.is_action_pressed("camera_left"))) * 2.0 * delta
 	camera_position = Quat(Vector3(0.0,gimbal_angle, 0.0)) * Vector3(0.0, height, gimbal_radius)
 	
 	var target_position = target.transform.origin

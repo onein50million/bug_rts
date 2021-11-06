@@ -23,7 +23,6 @@ func update_transform():
 	transform.origin = tangent_space_transform * tangent_space_position
 	transform.basis = (tangent_space_transform * Transform(tangent_space_rotation)).basis
 
-
 func update_tangent_transform():
 	var normal = surface.mesh_tool.get_face_normal(current_face)
 	var tangent = surface.get_face_tangent(current_face)
@@ -35,37 +34,39 @@ func transform_to_new_face():
 	tangent_space_position = tangent_space_transform.inverse() * transform.origin
 	var new_rotation: Quat = (tangent_space_transform.inverse() * Transform(transform.basis)).basis.get_rotation_quat()
 	tangent_space_rotation = new_rotation
-	
-func _ready():
 
+func reset_position():
+	tangent_space_position = Vector3.ZERO
+	tangent_space_rotation = Quat.IDENTITY
 	current_face = randi() % surface.mesh_tool.get_face_count()
 	update_tangent_transform()
 	update_transform()
-	print(transform.origin)
+
+func _ready():
+	current_face = randi() % surface.mesh_tool.get_face_count()
+	update_tangent_transform()
+	update_transform()
 	
 func _process(delta):
 	
-	if is_selected:
-		$MeshInstance.get_active_material(0).albedo_color = Color(1.0,0.2,0.2,1.0)
-	else:
-		$MeshInstance.get_active_material(0).albedo_color = Color(1.0,1.0,1.0,1.0)
-	
-	var calculated_world_rotation = (tangent_space_transform * Transform(tangent_space_rotation)).basis
-	
+	$Selection.visible = is_selected
 	turn = (int(Input.is_action_pressed("left")) - int(Input.is_action_pressed("right"))) * delta * 2.0
-	
+
 	var movement = (int(Input.is_action_pressed("forward")) - int(Input.is_action_pressed("reverse"))) * delta * 0.3
 	tangent_space_rotation *= Quat(Vector3(0.0,turn,0.0))
-#	print(tangent_space_rotation.xform(Vector3.FORWARD * movement * delta).length())
-#	print(delta)
 	tangent_space_position += tangent_space_rotation.xform(Vector3.FORWARD * movement)
 
-	var calculated_world_position = tangent_space_transform * tangent_space_position
-#	tangent_space_position = tangent_space_transform.inverse() * (calculated_world_position + Vector3.UP * delta)
 
 	update_transform()
-	var closest_face_data = surface.get_closest_face_data(transform.origin)
-	if current_face != closest_face_data.index:
+
+	var inside_triangle = surface.is_inside_triangle(transform.origin, current_face)
+	if not inside_triangle:
+		var closest_face_data = surface.get_closest_face_data(transform.origin)
+
+		if closest_face_data.index == -1:
+			reset_position()
+			closest_face_data.index = current_face
+
 		current_face = closest_face_data.index
 		update_tangent_transform()
 		transform_to_new_face()
