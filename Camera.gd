@@ -29,7 +29,7 @@ func _process(delta):
 	
 	var target_position = target.transform.origin
 	var distance_to_car = transform.origin.distance_to(target_position)
-	var car_size = abs(target.get_aabb().get_longest_axis_size())
+	var car_size = abs(target.get_node("MeshInstance").get_aabb().get_longest_axis_size())
 	
 	var zoom_input = int(Input.is_action_just_released("zoom_out")) - int(Input.is_action_just_released("zoom_in"))
 	zoom_ratio *= 1.0 + float(zoom_input) * 0.1

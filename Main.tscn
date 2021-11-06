@@ -1,12 +1,13 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://goegap_4k.exr" type="Texture" id=1]
-[ext_resource path="res://models/bug.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://bug.tscn" type="PackedScene" id=2]
 [ext_resource path="res://models/person.obj" type="ArrayMesh" id=3]
 [ext_resource path="res://textures/skin2/skin2.tres" type="Material" id=4]
 [ext_resource path="res://WorldEnvironment.gd" type="Script" id=5]
 [ext_resource path="res://Person.gd" type="Script" id=6]
 [ext_resource path="res://Camera.gd" type="Script" id=7]
+[ext_resource path="res://SelectionBox.gd" type="Script" id=9]
 
 [sub_resource type="PanoramaSky" id=1]
 panorama = ExtResource( 1 )
@@ -31,7 +32,6 @@ camera_path = NodePath("../Camera")
 mode = 1
 script = ExtResource( 6 )
 camera_path = NodePath("../Camera")
-ball_path = NodePath("../bug")
 
 [node name="MeshInstance" type="MeshInstance" parent="Person"]
 mesh = ExtResource( 3 )
@@ -46,7 +46,13 @@ near = 1.0
 script = ExtResource( 7 )
 target_path = NodePath("../bug")
 
-[node name="bug" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19.9533, 2.45634 )
-mesh = ExtResource( 2 )
-material/0 = null
+[node name="bug" parent="." instance=ExtResource( 2 )]
+
+[node name="SelectionBox" type="ColorRect" parent="."]
+margin_right = 317.0
+margin_bottom = 274.0
+color = Color( 1, 1, 1, 0.196078 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

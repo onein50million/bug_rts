@@ -9,22 +9,18 @@ var time = 0.0
 
 var cooldown = 0.0
 
-var turn = 0.0
+onready var bug_scene = preload("res://bug.tscn")
 
 export var camera_path: NodePath
 export var ball_path: NodePath
 
 var camera: Camera
-var ball: MeshInstance
 
 var surface_tool: SurfaceTool
 var mesh_tool: MeshDataTool
 
-var tangent_space_position: Vector3 = Vector3.ZERO
-var tangent_space_rotation: Quat = Quat(Vector3.FORWARD, 0.0)
-var current_face = 0
+var units = []
 
-var tangent_space_transform = Transform.IDENTITY
 
 func fmod(x, y):
 	return x - y * floor(x / y)
@@ -100,111 +96,36 @@ func get_closest_face_data(position: Vector3) -> FaceData:
 	print("Failed to find triangle")
 	return FaceData.new(0, Vector3.ZERO) #shouldn't reach
 
-func quaternion_look_at(vector: Vector3, up: Vector3) -> Quat:
-	var basis = Basis(vector.cross(up),up,vector)
-	return basis.orthonormalized().get_rotation_quat().normalized()
 
-#func quaternion_look_at(vector: Vector3) -> Quat:
-#	var dot = Vector3.FORWARD.dot(vector)
-#
-#	var rot_angle =  acos(dot)
-#	var rot_axis = Vector3.FORWARD.cross(vector).normalized()
-#
-#	return Quat(rot_axis, rot_angle)
+func select_units(selection_box: Rect2):
+	for unit in units:
+		var viewport_position = camera.unproject_position(unit.transform.origin)
+		unit.is_selected = selection_box.has_point(viewport_position)
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$CollisionShape.shape = $MeshInstance.mesh.create_trimesh_shape()
 	camera = get_node(camera_path)
-	ball = get_node(ball_path)
 	
 	surface_tool = SurfaceTool.new()
-	
 	surface_tool.create_from($MeshInstance.mesh,0)
 	
 	var array_plane = surface_tool.commit()
 	mesh_tool = MeshDataTool.new()
 	mesh_tool.create_from_surface(array_plane,0)
-	current_face = get_closest_face_data(ball.transform.origin).index
-	update_tangent_transform()
+	
+	units.append(get_parent().get_node("bug"))
+	var spread = 100.0
+	for i in range(5):
+		var new_unit = bug_scene.instance()
+		new_unit.transform.origin = Vector3(rand_range(-spread, spread),rand_range(-spread, spread),rand_range(-spread, spread))
+		
+		get_parent().call_deferred("add_child",new_unit)
 
 
-func update_tangent_transform():
-	var normal = mesh_tool.get_face_normal(current_face)
-	var tangent = get_face_tangent(current_face)
-	var bitangent = normal.cross(tangent)
-	var basis = Basis(bitangent, normal, tangent).orthonormalized()
-	tangent_space_transform = Transform(basis, get_face_position(current_face)).orthonormalized()
-
-func transform_to_new_face():
-	tangent_space_position = tangent_space_transform.inverse() * ball.transform.origin
-	var new_rotation: Quat = (tangent_space_transform.inverse() * Transform(ball.transform.basis)).basis.get_rotation_quat()
-	tangent_space_rotation = new_rotation
-
-func set_ball_transform():
-#	ball.transform = tangent_space_transform
-	ball.transform.origin = tangent_space_transform * tangent_space_position
-	ball.transform.basis = (tangent_space_transform * Transform(tangent_space_rotation)).basis
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	time += delta
-#
-#	tangent_space_rotation *= Quat(Vector3(0.0,100.0*delta,0.0))
 
-	
-#	if time > 0.1:
-#		time = 0.0
-#		current_face = (current_face + 1) % mesh_tool.get_face_count()
-#		update_tangent_transform()
-#		transform_to_new_face()
-#		set_ball_transform()
-
-	#Tangent space transform * tangent space position = world position
-#	var calculated_world_position = tangent_space_transform * tangent_space_position
-#	tangent_space_position = tangent_space_transform.inverse() * (calculated_world_position + Vector3.UP * delta)
-	var calculated_world_rotation = (tangent_space_transform * Transform(tangent_space_rotation)).basis
-	
-	turn = (int(Input.is_action_pressed("left")) - int(Input.is_action_pressed("right"))) * delta * 2.0
-	
-	var movement = (int(Input.is_action_pressed("forward")) - int(Input.is_action_pressed("reverse"))) * delta * 0.3
-	tangent_space_rotation *= Quat(Vector3(0.0,turn,0.0))
-#	print(tangent_space_rotation.xform(Vector3.FORWARD * movement * delta).length())
-#	print(delta)
-	tangent_space_position += tangent_space_rotation.xform(Vector3.FORWARD * movement)
-
-	var calculated_world_position = tangent_space_transform * tangent_space_position
-#	tangent_space_position = tangent_space_transform.inverse() * (calculated_world_position + Vector3.UP * delta)
-
-	set_ball_transform()
-	var closest_face_data = get_closest_face_data(ball.transform.origin)
-	if current_face != closest_face_data.index:
-		print("Face change")
-		current_face = closest_face_data.index
-		print(closest_face_data.position.distance_to(ball.transform.origin))
-		update_tangent_transform()
-		transform_to_new_face()
-
-		var forward_vector = tangent_space_rotation * Vector3.FORWARD
-		var flat_vector = forward_vector
-		flat_vector.y = 0.0
-		flat_vector = flat_vector.normalized()
-		tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
-		set_ball_transform()
-	tangent_space_position.y = 0.0
-	
-	
-#	if Input.is_action_pressed("brake"):
-#		var forward_vector = tangent_space_rotation * Vector3.FORWARD
-#		var flat_vector = forward_vector
-#		flat_vector.y = 0.0
-#		flat_vector = flat_vector.normalized()
-#		tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
-#		set_ball_transform()
-
-
-#	var quat1 = Quat(0.2,1.2,3.2,5.1).normalized()
-##	var quat2 = Quat(0.4,1.1,1.5,3.1).normalized()
-#	var quat2 = quaternion_look_at(quat1 * Vector3.FORWARD)
-#
-#	ball.transform = Transform(quat1.slerp(quat2,sin(time)/2.0 + 0.5))
