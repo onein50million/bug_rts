@@ -4,11 +4,10 @@ class_name Unit
 
 var is_selected: bool = false
 
+var speed = 0.5
 var movement = 0.0
 
-export var surface_path: NodePath
-onready var surface = get_node(surface_path)
-
+onready var surface = get_tree().get_nodes_in_group("surface")[0]
 var random_turn = 0.0
 var random_turn_cooldown = 1.0
 
@@ -20,8 +19,9 @@ var tangent_space_transform = Transform.IDENTITY
 var tangent_transform_inverse = Transform.IDENTITY
 var orders = []
 
-enum OrderType {Move}
+enum UnitType {Bug, Queen, Jump	}
 
+enum OrderType {Move}
 class Order:
 	var type
 	var data
@@ -31,7 +31,7 @@ class Order:
 		var order_scene = preload("res://OrderMarker.tscn")
 		type = _order_type
 		main_scene = _main_scene
-		order_node = order_scene.instance()
+		order_node = order_scene.instance() #TODO: make a pool so there isn't a big lag spike
 		main_scene.add_child(order_node)
 		match _order_type:
 			OrderType.Move:
@@ -70,9 +70,9 @@ func transform_to_new_face():
 func reset_position():
 	tangent_space_position = Vector3.ZERO
 	tangent_space_rotation = Quat.IDENTITY
-	current_face = randi() % surface.mesh_tool.get_face_count()
+	current_face = surface.get_closest_face(transform.origin).index
 	update_tangent_transform()
-	update_transform(0.0)
+	update_transform(1.0)
 
 func flatten_quaternion(quaternion: Quat):
 	var forward_vector = quaternion * Vector3.FORWARD
@@ -99,18 +99,18 @@ func process_order(order: Order) -> bool:
 			var order_complete = distance_to_go < rand_range(-0.1,0.1) and randf() > 0.95
 			if not order_complete:
 				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized(), Vector3.DOWN),0.03)
-				movement = 0.5
+				movement = speed
 			return order_complete
 		_:
 			return true
 
 func _ready():
-	current_face = randi() % surface.mesh_tool.get_face_count()
+#	current_face = randi() % surface.mesh_tool.get_face_count()
 	update_tangent_transform()
-	update_transform(0.0)
-
+	update_transform(1.0)
+	
 func _process(delta):
-	movement = 0.0
+	movement = speed * 0.2
 	$Selection.visible = is_selected
 	for order in orders:
 		order.order_node.visible = is_selected
@@ -125,7 +125,7 @@ func _process(delta):
 
 	if random_turn_cooldown	<= 0.0:
 		random_turn_cooldown = 1.0
-		var random_range = 0.01
+		var random_range = 0.05
 		random_turn = rand_range(-random_range, random_range)
 	else:
 		random_turn_cooldown -= 1.0 * delta* rand_range(0.5,3.0)
@@ -137,7 +137,7 @@ func _process(delta):
 
 	var inside_triangle = surface.is_inside_triangle(transform.origin, current_face)
 	if not inside_triangle:
-		var closest_face_data = surface.get_closest_face_data(transform.origin)
+		var closest_face_data = surface.get_standing_face(transform.origin)
 
 		if closest_face_data.index == -1:
 			print("Invalid face, resetting position")
@@ -150,7 +150,7 @@ func _process(delta):
 		
 		var forward_vector = tangent_space_rotation * Vector3.FORWARD
 		var flat_vector = forward_vector
-		flat_vector.y -= flat_vector.y * 0.0 * delta
+		flat_vector.y *= 0.0
 		flat_vector = flat_vector.normalized()
 		tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
 		update_transform(1.0)

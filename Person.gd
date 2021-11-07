@@ -10,6 +10,7 @@ var time = 0.0
 var cooldown = 0.0
 
 onready var bug_scene = preload("res://bug.tscn")
+onready var queen_scene = preload("res://bug_queen.tscn")
 
 export var camera_path: NodePath
 export var ball_path: NodePath
@@ -36,7 +37,21 @@ func get_face_tangent(face_index):
 	var first = mesh_tool.get_vertex(mesh_tool.get_face_vertex(face_index, 0))
 	var second = mesh_tool.get_vertex(mesh_tool.get_face_vertex(face_index, 1))
 	return (first - second).normalized()
-	
+
+func get_closest_face(position: Vector3) -> FaceData:
+	var closest_position = get_face_position(0)
+	var closest_distance = closest_position.distance_to(position)
+	var closest_index = 0
+	for face_index in range(mesh_tool.get_face_count()):
+		var face_position = get_face_position(face_index)
+		var face_distance = face_position.distance_to(position)
+		if face_distance < closest_distance:
+			closest_position = face_position
+			closest_distance = face_distance
+			closest_index = face_index
+	return FaceData.new(closest_index, closest_position)
+
+
 class FaceData:
 	var index: int
 	var position: Vector3
@@ -60,7 +75,7 @@ func is_inside_triangle(point: Vector3, face_index: int):
 	#TODO: make better variable names
 	return face_helper.is_inside_triangle(point, face_index, mesh_tool)
 	
-func get_closest_face_data(position: Vector3) -> FaceData:
+func get_standing_face(position: Vector3) -> FaceData:
 	return face_helper.get_closest_face_data(position, mesh_tool)
 
 func get_face_position(face_index):
@@ -111,6 +126,20 @@ func select_units(selection_box: Rect2):
 		var viewport_position = camera.unproject_position(unit.transform.origin)
 		unit.is_selected = selection_box.has_point(viewport_position)
 
+
+func spawn_bug(position,type):
+	var new_unit
+	match type:
+		Unit.UnitType.Bug:
+			new_unit = bug_scene.instance()
+		Unit.UnitType.Queen:
+			new_unit = queen_scene.instance()
+	new_unit.transform.origin = position
+	new_unit.current_face = get_closest_face(position).index
+	units.append(new_unit)
+	get_parent().call_deferred("add_child",new_unit)
+	
+
 func _input(event):
 	if event.is_action_released("move"):
 		var ray_origin = camera.project_ray_origin(get_viewport().get_mouse_position())
@@ -146,7 +175,7 @@ func _input(event):
 				new_order.data.target = target
 				new_order.update_order()
 				unit.new_orders(new_order)
-			
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	print("Creating mesh tool")
@@ -173,13 +202,10 @@ func _ready():
 			astar.connect_points(point, connected_face)
 	
 	print("Spawning test bugs")
-	units.append(get_parent().get_node("bug"))
-	var spread = 100.0
+	spawn_bug(Vector3.ZERO,Unit.UnitType.Queen)
 	for i in range(100):
-		var new_unit = bug_scene.instance()
-		new_unit.transform.origin = Vector3(rand_range(-spread, spread),rand_range(-spread, spread),rand_range(-spread, spread))
-		units.append(new_unit)
-		get_parent().call_deferred("add_child",new_unit)
+		var position = get_face_position(randi() % mesh_tool.get_face_count())
+		spawn_bug(position,Unit.UnitType.Bug)
 
 
 

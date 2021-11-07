@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/bug_queen.obj-2f3162f3891f333c29b0bbdac3df65c4.mesh"
+
+[deps]
+
+files=[ "res://.import/bug_queen.obj-2f3162f3891f333c29b0bbdac3df65c4.mesh" ]
+
+source_file="res://models/bug_queen.obj"
+dest_files=[ "res://.import/bug_queen.obj-2f3162f3891f333c29b0bbdac3df65c4.mesh", "res://.import/bug_queen.obj-2f3162f3891f333c29b0bbdac3df65c4.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

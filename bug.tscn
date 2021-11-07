@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:378a8792d8cbb5cdf441ee3137542d8d30b46e1d706f522c782d2b2914ccd1d2
-size 155567
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Selection.tscn" type="PackedScene" id=1]
+[ext_resource path="res://bug.gd" type="Script" id=2]
+[ext_resource path="res://shaders/bug.tres" type="Material" id=3]
+[ext_resource path="res://models/bug.obj" type="ArrayMesh" id=4]
+
+[node name="bug" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = ExtResource( 4 )
+material/0 = ExtResource( 3 )
+
+[node name="Selection" parent="." instance=ExtResource( 1 )]

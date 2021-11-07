@@ -9,6 +9,8 @@ export var target_path: NodePath
 
 var gimbal_radius = 25.0
 var gimbal_angle = 0.0
+var yaw = 0.0
+var pitch = 0.0
 var height = 10.0
 
 
@@ -29,8 +31,16 @@ func _input(event):
 	if event.is_action_released("pan"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	if event is InputEventMouseMotion and Input.is_action_pressed("pan"):
-		height += (event.relative.y / get_viewport().size.y) * vertical_sensitivity * clamp(zoom_ratio,0.0, 1.0)
-		gimbal_angle -= (event.relative.x / get_viewport().size.x) * horizontal_sensitivity * clamp(zoom_ratio,0.0, 1.0)
+		var mouse_x = (event.relative.x / get_viewport().size.x) * horizontal_sensitivity * clamp(zoom_ratio,0.0, 1.0)
+		var mouse_y = (event.relative.y / get_viewport().size.y) * vertical_sensitivity * clamp(zoom_ratio,0.0, 1.0)
+		if Input.is_action_pressed("view_modifier"):
+			gimbal_angle -= mouse_x
+			height += mouse_y
+			pitch = atan2(tan(pitch)*gimbal_radius - mouse_y, gimbal_radius)
+		else:
+			yaw += mouse_x * 0.3
+			pitch += mouse_y*0.1
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -41,7 +51,6 @@ func _process(delta):
 	camera_position = Quat(Vector3(0.0,gimbal_angle, 0.0)) * Vector3(0.0, height, gimbal_radius)
 	
 	var angular_size = PI/32.0
-
 	if not target_path.is_empty():
 		var target = get_node(target_path)
 		var target_position = target.transform.origin
@@ -51,6 +60,7 @@ func _process(delta):
 		angular_size = 2.0 * atan2(target_size, 2.0 * distance_to_target)
 	else:
 		look_at_from_position(camera_position, Vector3(0.0,height,0.0), Vector3.UP)
+		transform.basis *= Basis(Vector3(pitch,yaw, 0.0))
 	var zoom_input = int(Input.is_action_just_released("zoom_out")) - int(Input.is_action_just_released("zoom_in"))
 	zoom_ratio *= 1.0 + float(zoom_input) * 0.1
 	
