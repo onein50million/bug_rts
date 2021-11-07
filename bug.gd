@@ -47,7 +47,7 @@ class Order:
 
 
 func quaternion_look_at(vector: Vector3, up: Vector3) -> Quat:
-	var basis = Basis(vector.cross(up),up,vector)
+	var basis = Basis(vector.cross(up),up,vector).orthonormalized()
 	return basis.get_rotation_quat()
 	
 func update_transform(interpolation_amount):
@@ -81,12 +81,14 @@ func flatten_quaternion(quaternion: Quat):
 	flat_vector = flat_vector.normalized()
 	return quaternion_look_at(flat_vector,Vector3.DOWN)
 
-func new_orders(order: Order, replace: bool):
-	if replace:
-		for order in orders:
-			order.remove_order()
-		orders.clear()
+func new_orders(order: Order):
 	orders.append(order)
+
+func clear_orders():
+	for order in orders:
+		order.remove_order()
+	orders.clear()
+
 #returns true if order is finished
 func process_order(order: Order) -> bool:
 	match order.type:
@@ -96,7 +98,7 @@ func process_order(order: Order) -> bool:
 			var distance_to_go = order.data.target.distance_to(transform.origin)
 			var order_complete = distance_to_go < rand_range(-0.1,0.1) and randf() > 0.95
 			if not order_complete:
-				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized(), Vector3.DOWN),0.02)
+				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized(), Vector3.DOWN),0.03)
 				movement = 0.5
 			return order_complete
 		_:
@@ -129,7 +131,7 @@ func _process(delta):
 		random_turn_cooldown -= 1.0 * delta* rand_range(0.5,3.0)
 	tangent_space_rotation = tangent_space_rotation.slerp(tangent_space_rotation * Quat(Vector3(0.0,random_turn, 0.0)),random_turn_cooldown)
 	tangent_space_position += tangent_space_rotation.xform(Vector3.FORWARD * movement * delta)
-	
+	tangent_space_position.y = 0.0
 	
 	update_transform(1.0)
 
@@ -138,6 +140,7 @@ func _process(delta):
 		var closest_face_data = surface.get_closest_face_data(transform.origin)
 
 		if closest_face_data.index == -1:
+			print("Invalid face, resetting position")
 			reset_position()
 			closest_face_data.index = current_face
 
@@ -150,9 +153,7 @@ func _process(delta):
 		flat_vector.y -= flat_vector.y * 0.0 * delta
 		flat_vector = flat_vector.normalized()
 		tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
-		update_transform(0.0)
-
-	tangent_space_position.y = 0.0
+		update_transform(1.0)
 
 
 
