@@ -11,19 +11,30 @@ var gimbal_radius = 25.0
 var gimbal_angle = 0.0
 var height = 10.0
 
+
 var zoom_ratio = 1.0
 var camera_position = transform.origin
+
+var vertical_sensitivity = 2.0
+var horizontal_sensitivity = 2.0
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass
 
-
+func _input(event):
+	if event.is_action_pressed("pan"):
+		Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	if event.is_action_released("pan"):
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if event is InputEventMouseMotion and Input.is_action_pressed("pan"):
+		height -= (event.relative.y / get_viewport().size.y) * vertical_sensitivity
+		gimbal_angle -= (event.relative.x / get_viewport().size.x) * horizontal_sensitivity
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	var target = get_node(target_path)
-	
 	height += (int(Input.is_action_pressed("camera_up")) - int(Input.is_action_pressed("camera_down"))) * 20.0 * delta
 	gimbal_angle += (int(Input.is_action_pressed("camera_right")) - int(Input.is_action_pressed("camera_left"))) * 2.0 * delta
 	camera_position = Quat(Vector3(0.0,gimbal_angle, 0.0)) * Vector3(0.0, height, gimbal_radius)

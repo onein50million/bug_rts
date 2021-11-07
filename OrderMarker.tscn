@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="SphereMesh" id=1]
+radius = 0.01
+height = 0.02
+
+[sub_resource type="Shader" id=2]
+code = "shader_type spatial;
+render_mode unshaded;
+
+void fragment(){
+	ALBEDO = vec3(0.1,0.9,0.1);
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+
+[node name="OrderMarker" type="MeshInstance"]
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )

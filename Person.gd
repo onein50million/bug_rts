@@ -64,6 +64,7 @@ func get_face_position(face_index):
 	return face_helper.get_face_position(face_index, mesh_tool)
 
 func select_units(selection_box: Rect2):
+	#TODO: don't select occluded units
 	for unit in units:
 		var viewport_position = camera.unproject_position(unit.transform.origin)
 		unit.is_selected = selection_box.has_point(viewport_position)
@@ -77,11 +78,17 @@ func _input(event):
 		if raycast_result.empty():
 			print("no hits")
 			return
-		var new_target = raycast_result.position
-		print(new_target)
+		
 		for unit in units:
-			unit.new_orders(new_target)
-
+			if unit.is_selected:
+#				var random_vector = Vector3(rand_range(-spread,spread),rand_range(-spread,spread),rand_range(-spread,spread))
+#				var target = raycast_result.position + random_vector
+				var target = raycast_result.position
+				var new_order = Unit.Order.new(Unit.OrderType.Move, self)
+				new_order.data.target = target
+				new_order.update_order()
+				unit.new_orders(new_order, not Input.is_action_pressed("queue"))
+			
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$CollisionShape.shape = $MeshInstance.mesh.create_trimesh_shape()
