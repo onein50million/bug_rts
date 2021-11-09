@@ -1,9 +1,15 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://bug_queen.gd" type="Script" id=1]
 [ext_resource path="res://models/bug_queen.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://shaders/bug.tres" type="Material" id=3]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=4]
+[ext_resource path="res://shaders/crown.tres" type="Material" id=5]
+[ext_resource path="res://Scenes/UnitHelpers/SelectHitbox.tscn" type="PackedScene" id=6]
+
+[sub_resource type="CapsuleShape" id=1]
+radius = 0.0357863
+height = 0.0405626
 
 [node name="bug_queen" type="Spatial"]
 script = ExtResource( 1 )
@@ -11,6 +17,18 @@ script = ExtResource( 1 )
 [node name="MeshInstance" type="MeshInstance" parent="."]
 mesh = ExtResource( 2 )
 material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
 
 [node name="Selection" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.197641, 0 )
+inner_radius = 0.04
+outer_radius = 0.05
+
+[node name="SelectHitbox" parent="." instance=ExtResource( 6 )]
+
+[node name="Hitbox" type="Area" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Hitbox"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0573011, 0 )
+shape = SubResource( 1 )

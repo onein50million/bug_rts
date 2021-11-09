@@ -1,0 +1,58 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://UI/TeamLabel.gd" type="Script" id=1]
+
+[node name="TeamLabel" type="GridContainer"]
+margin_right = 230.0
+margin_bottom = 14.0
+columns = 5
+script = ExtResource( 1 )
+
+[node name="TeamColor" type="ColorRect" parent="."]
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.1
+color = Color( 0.960784, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TeamName" type="Label" parent="."]
+margin_left = 4.0
+margin_right = 42.0
+margin_bottom = 14.0
+size_flags_horizontal = 2
+text = "Name"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QueenHealth" type="Label" parent="."]
+margin_left = 46.0
+margin_right = 135.0
+margin_bottom = 14.0
+size_flags_horizontal = 2
+text = "Queen Health"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BugKills" type="Label" parent="."]
+margin_left = 139.0
+margin_right = 194.0
+margin_bottom = 14.0
+size_flags_horizontal = 2
+text = "Bug Kills"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QueenKills" type="Label" parent="."]
+margin_left = 198.0
+margin_right = 272.0
+margin_bottom = 14.0
+size_flags_horizontal = 2
+text = "Queen Kills"
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -17,35 +17,35 @@ var height = 10.0
 var zoom_ratio = 1.0
 var camera_position = transform.origin
 
-var vertical_sensitivity = 5.0
-var horizontal_sensitivity = 2.0
 
+var vertical_sensitivity = 0.5
+var horizontal_sensitivity = 0.5
 
-# Called when the node enters the scene tree for the first time.
+var alt_vertical_sensitivity = 20.0
+var alt_horizontal_sensitivity = 5.0
+# Called when the node enters the scene t e for the first time.
 func _ready():
 	pass
 
 func _input(event):
-	if event.is_action_pressed("pan"):
+	if event.is_action_pressed("middle_click"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
-	if event.is_action_released("pan"):
+	if event.is_action_released("middle_click"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	if event is InputEventMouseMotion and Input.is_action_pressed("pan"):
-		var mouse_x = (event.relative.x / get_viewport().size.x) * horizontal_sensitivity * clamp(zoom_ratio,0.0, 1.0)
-		var mouse_y = (event.relative.y / get_viewport().size.y) * vertical_sensitivity * clamp(zoom_ratio,0.0, 1.0)
+	if event is InputEventMouseMotion and Input.is_action_pressed("middle_click"):
+		var mouse_x = (event.relative.x / get_viewport().size.x) * clamp(zoom_ratio,0.0, 1.0)
+		var mouse_y = (event.relative.y / get_viewport().size.y) * clamp(zoom_ratio,0.0, 1.0)
 		if Input.is_action_pressed("view_modifier"):
-			gimbal_angle -= mouse_x
-			height += mouse_y
-			pitch = atan2(tan(pitch)*gimbal_radius - mouse_y, gimbal_radius)
+			gimbal_angle -= mouse_x * alt_horizontal_sensitivity
+			height += mouse_y * alt_vertical_sensitivity 
+			pitch = atan2(tan(pitch)*gimbal_radius - (mouse_y * alt_vertical_sensitivity), gimbal_radius)
 		else:
-			yaw += mouse_x * 0.3
-			pitch += mouse_y*0.1
+			yaw += mouse_x * vertical_sensitivity 
+			pitch += mouse_y * horizontal_sensitivity
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-
-		
 	height += (int(Input.is_action_pressed("camera_up")) - int(Input.is_action_pressed("camera_down"))) * 20.0 * delta
 	gimbal_angle += (int(Input.is_action_pressed("camera_right")) - int(Input.is_action_pressed("camera_left"))) * 2.0 * delta
 	camera_position = Quat(Vector3(0.0,gimbal_angle, 0.0)) * Vector3(0.0, height, gimbal_radius)
@@ -62,7 +62,7 @@ func _process(delta):
 		look_at_from_position(camera_position, Vector3(0.0,height,0.0), Vector3.UP)
 		transform.basis *= Basis(Vector3(pitch,yaw, 0.0))
 	var zoom_input = int(Input.is_action_just_released("zoom_out")) - int(Input.is_action_just_released("zoom_in"))
-	zoom_ratio *= 1.0 + float(zoom_input) * 0.1
+	zoom_ratio *= 1.0 + float(zoom_input) * 0.3
 	
 
 

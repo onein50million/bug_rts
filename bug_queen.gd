@@ -1,8 +1,14 @@
 extends Unit
 
-func _ready():
+func _init():
 	speed = 0.1
+	unit_type = Globals.UnitType.Queen
 
-func _process(delta):
-	if randf() > 0.99:
-		surface.spawn_bug(transform.origin, UnitType.Bug)
+func die():
+	last_damage_source_team.queen_kills += 1
+	.die()
+
+
+func _process(_delta):	
+	if randf() > 0.99 and team.units.size() < 50:
+		surface.spawn_bug(transform.origin, Globals.UnitType.Bug, team)
