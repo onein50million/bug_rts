@@ -188,9 +188,9 @@ func _unhandled_input(event):
 						var ending_point = astar.get_closest_point(raycast_result.position)
 						var point_path = astar.get_point_path(starting_point, ending_point)
 						
-						if point_path.size() > 1:
+						if point_path.size() > 0:
 							point_path.remove(0) #skip the first node
-						if point_path.size() > 1:
+						if point_path.size() > 0:
 							point_path.remove(point_path.size() - 1) #and the last node
 						
 						for point in point_path:

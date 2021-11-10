@@ -11,6 +11,7 @@ onready var selection_box = get_node(selection_box_path)
 
 onready var direct_space_state = get_world().direct_space_state
 
+var celebrated =false
 
 func _unhandled_input(event):
 	if event.is_action_pressed("deselect"):
@@ -48,14 +49,17 @@ func _process(_delta):
 		if is_instance_valid(team.queen):
 			alive_team_count += 1
 			last_alive_team = team
-	if alive_team_count == 1:
-		celebrate(last_alive_team)
-	if alive_team_count  <= 0:
-		tie()
+	if celebrated == false:
+		if alive_team_count == 1:
+			celebrate(last_alive_team)
+		if alive_team_count  <= 0:
+			tie()
 func celebrate(winner: Globals.Team):
+	celebrated = true
 	$MainUI/WinnerDialog.dialog_text = "Winner is %s" % winner.team_name
 	$MainUI/WinnerDialog.popup_centered()
 
 func tie():
+	celebrated = true
 	$MainUI/WinnerDialog.dialog_text = "Tie, no winner"
 	$MainUI/WinnerDialog.popup_centered()

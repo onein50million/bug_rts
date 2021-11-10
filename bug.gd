@@ -87,7 +87,8 @@ func process_order(order: Globals.Order) -> bool:
 			var distance_to_go = order.data.target.distance_to(transform.origin)
 			var order_complete = distance_to_go < rand_range(-0.1,0.1) and randf() > 0.95
 			if not order_complete:
-				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized(), Vector3.DOWN),0.1)
+				#sometimes direction vector is zero so a small vector needs to be added
+				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized() + Vector3.ONE * 0.0001 , Vector3.DOWN),0.1)
 			return order_complete
 		Globals.OrderType.AttackUnit:
 			if not is_instance_valid(order.data.target):
@@ -167,8 +168,6 @@ func _process(delta):
 	if not inside_triangle:
 
 		var closest_face_data = surface.get_standing_face(transform.origin)
-		if not closest_face_data.index in surface.get_connected_faces(current_face):
-			print("old face: %d\tnew face: %d" % [current_face,closest_face_data.index])
 		if closest_face_data.index == -1:
 			print("Invalid face, resetting position")
 			reset_position()

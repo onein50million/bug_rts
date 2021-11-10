@@ -73,6 +73,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="WinnerDialog" type="AcceptDialog" parent="MainUI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -53.5
+margin_top = -37.5
+margin_right = 53.5
+margin_bottom = 37.5
+window_title = "Victory!"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="TeamList" type="Tree" parent="MainUI"]
 margin_right = 582.0
 margin_bottom = 288.0
@@ -89,21 +103,6 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -64.0
 margin_right = 301.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="WinnerDialog" type="AcceptDialog" parent="MainUI"]
-visible = true
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -53.5
-margin_top = -37.5
-margin_right = 53.5
-margin_bottom = 37.5
-window_title = "Victory!"
 __meta__ = {
 "_edit_use_anchors_": false
 }
