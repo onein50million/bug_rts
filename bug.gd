@@ -13,7 +13,6 @@ var max_health = 100.0
 var health = max_health
 
 var last_damage_source_team: Globals.Team
-
 onready var surface = get_tree().get_nodes_in_group("surface")[0]
 var random_turn = 0.0
 var random_turn_cooldown = 1.0
@@ -21,6 +20,8 @@ var random_turn_cooldown = 1.0
 var tangent_space_position: Vector3 = Vector3.ZERO
 var tangent_space_rotation: Quat = Quat(Vector3.FORWARD, 0.0)
 var current_face = 0
+
+var velocity:Vector3 = Vector3.ZERO
 
 var attack_time = 2.0
 var current_attack = 0.0
@@ -110,10 +111,10 @@ func die():
 
 func attack(other:Unit):
 	if current_attack < 0.0 and other.team != team:
+		current_attack = attack_time
 		other.last_damage_source_team = team
 		other.health -= damage
-		current_attack = attack_time
-#		tangent_space_position += tangent_space_rotation.xform(Vector3.BACK * 0.05)
+
 
 func _ready():
 #	current_face = randi() % surface.mesh_tool.get_face_count()
@@ -151,7 +152,7 @@ func _process(delta):
 			var removed_order: Globals.Order= orders.pop_front() #might get slow, should look into
 			removed_order.remove_order()
 		else:
-			movement = speed #SPEED if order isn't done yet
+			movement = speed/2.0 if current_attack > 0.0 else speed #SPEED if order isn't done yet
 	if random_turn_cooldown	<= 0.0:
 		random_turn_cooldown = 1.0
 		var random_range = 0.05
@@ -185,8 +186,20 @@ func _process(delta):
 		update_transform(1.0)
 
 func _physics_process(delta):
+	velocity *= 0.99
+#	velocity = Vector3.UP
+#	if velocity.length() > 0.1:
+#		print(velocity)
+	tangent_space_position = tangent_transform_inverse * (tangent_space_transform * tangent_space_position + velocity * delta)
 	current_attack -= delta
 	for area in $Hitbox.get_overlapping_areas():
 		var parent = area.get_parent()
 		if "IS_UNIT" in parent and IS_UNIT:
+#			print("%s vs %s" %[parent.name, name])
+#			var velocity_magnitude = 0.01/(parent.transform.origin.distance_squared_to(transform.origin) + 0.00001)
+			var velocity_direction = -(parent.transform.origin - transform.origin).normalized()
+			var velocity_magnitude = 10.0
+			velocity += velocity_direction * velocity_magnitude * 1.0 * delta
+#			print(velocity_magnitude)
+#			parent.velocity -= velocity_direction * velocity_magnitude * 0.5
 			attack(parent)
