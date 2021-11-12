@@ -2,6 +2,9 @@ extends Unit
 
 func _init():
 	speed = 0.1
+	max_health = 500.0
+	damage = 100.0
+	attack_time = 0.1
 	unit_type = Globals.UnitType.Queen
 
 func die():

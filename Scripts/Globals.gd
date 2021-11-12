@@ -1,5 +1,11 @@
 extends Node
 
+
+var enemy_team_count:int
+var player_starting_position:Vector3
+var player_team_name: String
+var player_team_color: Color
+
 enum CursorState{
 	Select, #Default
 	Move,
@@ -52,6 +58,8 @@ class Team:
 	var color: Color
 	var team_name: String
 	var units = []
+	
+	var starting_face
 	
 	var queen
 	

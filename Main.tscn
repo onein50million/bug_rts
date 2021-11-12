@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://TeamList.gd" type="Script" id=2]
@@ -6,7 +6,8 @@
 [ext_resource path="res://textures/skin2/skin2.tres" type="Material" id=4]
 [ext_resource path="res://WorldEnvironment.gd" type="Script" id=5]
 [ext_resource path="res://Person.gd" type="Script" id=6]
-[ext_resource path="res://Camera.gd" type="Script" id=7]
+[ext_resource path="res://Camera.tscn" type="PackedScene" id=7]
+[ext_resource path="res://UI/NotoSans-Regular.ttf" type="DynamicFontData" id=8]
 [ext_resource path="res://SelectionBox.gd" type="Script" id=9]
 
 [sub_resource type="ProceduralSky" id=1]
@@ -24,6 +25,13 @@ dof_blur_near_quality = 2
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0, 0, 0, 0.145098 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 8
+outline_size = 1
+outline_color = Color( 0.203922, 0.203922, 0.203922, 1 )
+use_filter = true
+font_data = ExtResource( 8 )
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
@@ -49,10 +57,7 @@ material/1 = null
 environment = SubResource( 2 )
 script = ExtResource( 5 )
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.90735e-06, 13.5715, 34.214 )
-near = 1.0
-script = ExtResource( 7 )
+[node name="Camera" parent="." instance=ExtResource( 7 )]
 
 [node name="SelectionBox" type="ColorRect" parent="."]
 visible = false
@@ -88,21 +93,30 @@ __meta__ = {
 }
 
 [node name="TeamList" type="Tree" parent="MainUI"]
-margin_right = 582.0
-margin_bottom = 288.0
+margin_right = 425.0
+margin_bottom = 104.0
 mouse_filter = 2
+size_flags_vertical = 3
 custom_styles/bg = SubResource( 3 )
+custom_fonts/font = SubResource( 4 )
+custom_constants/item_margin = 0
+custom_constants/hseparation = 0
+custom_constants/button_margin = 0
 columns = 5
+hide_folding = true
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Orders" type="HBoxContainer" parent="MainUI"]
+[node name="Orders" type="GridContainer" parent="MainUI"]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -64.0
-margin_right = 301.0
+margin_top = -110.0
+margin_right = 314.0
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 4
 __meta__ = {
 "_edit_use_anchors_": false
 }

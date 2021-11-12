@@ -143,8 +143,10 @@ func spawn_bug(position,type,team:Globals.Team):
 	new_unit.transform.origin = position
 	new_unit.current_face = get_closest_face(position).index
 	new_unit.team = team
+	new_unit.camera = camera
 	team.units.append(new_unit)
 	get_parent().call_deferred("add_child",new_unit)
+#	get_parent().add_child(new_unit)
 
 func _unhandled_input(event):
 	if Globals.cursor_state == Globals.CursorState.Select:
@@ -184,20 +186,7 @@ func _unhandled_input(event):
 							unit.clear_orders()
 		#				var random_vector = Vector3(rand_range(-spread,spread),rand_range(-spread,spread),rand_range(-spread,spread))
 		#				var target = raycast_result.position + random_vector
-						var starting_point = astar.get_closest_point(unit.transform.origin)
-						var ending_point = astar.get_closest_point(raycast_result.position)
-						var point_path = astar.get_point_path(starting_point, ending_point)
 						
-						if point_path.size() > 0:
-							point_path.remove(0) #skip the first node
-						if point_path.size() > 0:
-							point_path.remove(point_path.size() - 1) #and the last node
-						
-						for point in point_path:
-							var new_order = Globals.Order.new(Globals.OrderType.Move,self)
-							new_order.data.target = point
-							new_order.update_order()
-							unit.new_orders(new_order)
 						var target = raycast_result.position
 						var new_order = Globals.Order.new(Globals.OrderType.Move, self)
 						new_order.data.target = target
@@ -229,19 +218,17 @@ func _ready():
 		for connected_face in connected_faces:
 			astar.connect_points(point, connected_face)
 	
-	print("Spawning test bugs")
 	player_team = Globals.Team.new()
 	teams.append(player_team)
-	player_team.color = Color.orange
-	player_team.team_name = "Daniel's Team"
-	for _team in range(1):
-		teams.append(Globals.Team.new())
+	player_team.color = Globals.player_team_color
+	player_team.team_name = Globals.player_team_name
+	player_team.starting_face = get_closest_face(Globals.player_starting_position).index
+	for _team in range(Globals.enemy_team_count):
+		var new_team = Globals.Team.new()
+		new_team.starting_face = randi() % mesh_tool.get_face_count()
+		teams.append(new_team)
 	for team in teams:
-		spawn_bug(get_face_position(randi() % mesh_tool.get_face_count()),Globals.UnitType.Queen,team)
-		for _i in range(25):
-			var position = get_face_position(randi() % mesh_tool.get_face_count())
-			spawn_bug(position,Globals.UnitType.Bug,team)
-
+		spawn_bug(get_face_position(team.starting_face),Globals.UnitType.Queen,team)
 
 	var root = get_parent().get_node("MainUI/TeamList").create_item()
 	root.set_text(0, "Name")
@@ -254,13 +241,28 @@ func _ready():
 		get_parent().get_node("MainUI/TeamList").new_item(team)
 	
 	var order_icon_scene = preload("res://UI/OrderIcon.tscn")
-	get_parent().get_node("MainUI/Orders").margin_right = 64 * Globals.CursorState.size()
-	get_parent().get_node("MainUI/Orders").margin_top = -64
-	for state in Globals.CursorState:
-		var new_order_icon = order_icon_scene.instance()
-		new_order_icon.cursor_state = Globals.CursorState[state]
-		new_order_icon.text = state
-		get_parent().get_node("MainUI/Orders").add_child(new_order_icon)
+#	get_parent().get_node("MainUI/Orders").margin_right = 64 * Globals.CursorState.size()
+#	get_parent().get_node("MainUI/Orders").margin_top = -64
+	for y in range(3):
+		for x in range(4):
+			var new_order_icon:Button = order_icon_scene.instance()
+
+			if x+4*y < Globals.CursorState.size():
+				var state = Globals.CursorState.values()[x+4*y]
+				new_order_icon.cursor_state = state
+				new_order_icon.text = Globals.CursorState.keys()[state]
+			elif x == 0 and  y == 2:
+				new_order_icon.text = "Same Type"
+				new_order_icon.command = "same_type_select"
+			else:
+#				new_order_icon.cursor_state = Globals.CursorState.Move
+				new_order_icon.text = "Placeholder"
+			var shortcut = ShortCut.new()
+			var action = InputEventAction.new()
+			action.action = "grid%d%d"%[x,y]
+			shortcut.shortcut = action
+			new_order_icon.shortcut = shortcut
+			get_parent().get_node("MainUI/Orders").add_child(new_order_icon)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

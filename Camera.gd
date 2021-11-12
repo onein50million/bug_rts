@@ -14,7 +14,7 @@ var pitch = 0.0
 var height = 10.0
 
 
-var zoom_ratio = 1.0
+export var zoom_ratio = 1.0
 var camera_position = transform.origin
 
 

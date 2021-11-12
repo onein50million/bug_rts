@@ -10,7 +10,9 @@ var speed = 0.5
 var movement = 0.0
 
 var max_health = 100.0
-var health = max_health
+var health
+
+var camera: Camera
 
 var last_damage_source_team: Globals.Team
 onready var surface = get_tree().get_nodes_in_group("surface")[0]
@@ -30,16 +32,31 @@ var damage = 10.0
 var tangent_space_transform = Transform.IDENTITY
 var tangent_transform_inverse = Transform.IDENTITY
 var orders = []
-var team
+var team: Globals.Team
 
 var enemy_contextual_order = Globals.OrderType.AttackUnit
 var friendly_contextual_order = Globals.OrderType.Move
 var unit_type = Globals.UnitType.Bug
 
+var unit_label: Control
+var health_bar: ProgressBar
+
+var next_point
+
 func quaternion_look_at(vector: Vector3, up: Vector3) -> Quat:
 	var basis = Basis(vector.cross(up),up,vector).orthonormalized()
 	return basis.get_rotation_quat()
+
+func update_path_points(new_target:Vector3):
 	
+	var starting_point = surface.astar.get_closest_point(transform.origin)
+	var ending_point = surface.astar.get_closest_point(new_target)
+	var new_point_path:PoolVector3Array = surface.astar.get_point_path(starting_point, ending_point)
+	if new_point_path.size() > 1:
+		next_point = new_point_path[1]
+	else:
+		next_point = null
+
 func update_transform(interpolation_amount):
 	var new_transform = Transform((tangent_space_transform * Transform(tangent_space_rotation)).basis,tangent_space_transform * tangent_space_position)
 	transform = transform.interpolate_with(new_transform,interpolation_amount)
@@ -83,19 +100,29 @@ func clear_orders():
 func process_order(order: Globals.Order) -> bool:
 	match order.type:
 		Globals.OrderType.Move:
-			var direction = tangent_transform_inverse * order.data.target - tangent_transform_inverse * transform.origin
+			update_path_points(order.data.target)
+			var direction
+			if next_point != null:
+				direction = tangent_transform_inverse * next_point - tangent_transform_inverse * transform.origin
+			else:
+				direction = tangent_transform_inverse * order.data.target - tangent_transform_inverse * transform.origin
 			
 			var distance_to_go = order.data.target.distance_to(transform.origin)
-			var order_complete = distance_to_go < rand_range(-0.1,0.1) and randf() > 0.95
+			var order_complete = distance_to_go < rand_range(0.0,0.1) and randf() > 0.95
 			if not order_complete:
 				#sometimes direction vector is zero so a small vector needs to be added
-				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized() + Vector3.ONE * 0.0001 , Vector3.DOWN),0.1)
+				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized() + Vector3.ONE * 0.0001 , Vector3.DOWN),0.2)
 			return order_complete
 		Globals.OrderType.AttackUnit:
 			if not is_instance_valid(order.data.target):
 				return true
-			var target_direction = (tangent_transform_inverse * surface.project_point(current_face, order.data.target.transform.origin) - tangent_transform_inverse * transform.origin).normalized()
-			tangent_space_rotation = quaternion_look_at(target_direction, Vector3.DOWN)
+			update_path_points(order.data.target.transform.origin)
+			var direction
+			if next_point != null:
+				direction = tangent_transform_inverse * next_point - tangent_transform_inverse * transform.origin
+			else:
+				direction = tangent_transform_inverse * order.data.target.transform.origin - tangent_transform_inverse * transform.origin
+			tangent_space_rotation = quaternion_look_at(direction.normalized(), Vector3.DOWN)
 			return false
 		_:
 			print("Unimplemented Order")
@@ -111,15 +138,21 @@ func die():
 
 func attack(other:Unit):
 	if current_attack < 0.0 and other.team != team:
-		current_attack = attack_time
+		current_attack = attack_time*rand_range(0.9,1.1)
 		other.last_damage_source_team = team
-		other.health -= damage
+		other.health -= damage*rand_range(0.9,1.1)
 
 
 func _ready():
+	health = max_health
 #	current_face = randi() % surface.mesh_tool.get_face_count()
 	assert(has_node("Hitbox"))
 	assert(has_node("SelectHitbox"))
+	
+	unit_label = preload("res://UI/UnitLabel.tscn").instance()
+	add_child(unit_label)
+	health_bar = unit_label.get_node("HealthBar")
+	
 	update_tangent_transform()
 	update_transform(1.0)
 
@@ -136,7 +169,9 @@ func _enter_tree():
 	add_child(highlight_mesh)
 
 func _process(delta):
-
+	unit_label.visible = health < max_health
+	health_bar.value = health / max_health
+	
 	if health < 0.0:
 		die()
 	if not is_instance_valid(team.queen) and randf() > 0.99:
@@ -167,7 +202,6 @@ func _process(delta):
 
 	var inside_triangle = surface.is_inside_triangle(transform.origin, current_face)
 	if not inside_triangle:
-
 		var closest_face_data = surface.get_standing_face(transform.origin)
 		if closest_face_data.index == -1:
 			print("Invalid face, resetting position")
@@ -184,6 +218,8 @@ func _process(delta):
 		flat_vector = flat_vector.normalized()
 		tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
 		update_transform(1.0)
+	
+	unit_label.rect_position = camera.unproject_position(transform.origin)
 
 func _physics_process(delta):
 	velocity *= 0.99

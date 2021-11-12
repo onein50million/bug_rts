@@ -11,7 +11,17 @@ onready var selection_box = get_node(selection_box_path)
 
 onready var direct_space_state = get_world().direct_space_state
 
-var celebrated =false
+var celebrated = false
+
+func same_type_select():
+	var selected_types = []
+	for unit in surface.player_team.units:
+		if unit.is_selected and not unit.unit_type in selected_types:
+			selected_types.append(unit.unit_type)
+	for unit in surface.player_team.units:
+		if unit.unit_type in selected_types:
+			unit.is_selected = true
+
 
 func _unhandled_input(event):
 	if event.is_action_pressed("deselect"):

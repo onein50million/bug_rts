@@ -1,0 +1,134 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Camera.tscn" type="PackedScene" id=1]
+[ext_resource path="res://models/person.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://FaceSelector.gd" type="Script" id=3]
+[ext_resource path="res://Selection.tscn" type="PackedScene" id=4]
+[ext_resource path="res://StartButton.gd" type="Script" id=5]
+
+[sub_resource type="ConcavePolygonShape" id=1]
+
+[node name="Menu" type="PanelContainer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -256.0
+margin_top = -256.0
+margin_right = 256.0
+margin_bottom = 256.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 505.0
+margin_bottom = 505.0
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+margin_right = 498.0
+margin_bottom = 465.0
+size_flags_vertical = 7
+columns = 2
+
+[node name="TeamNameLabel" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 5.0
+margin_right = 238.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+text = "Team Name"
+
+[node name="TeamNameEdit" type="LineEdit" parent="VBoxContainer/GridContainer"]
+margin_left = 242.0
+margin_right = 498.0
+margin_bottom = 33.0
+size_flags_horizontal = 3
+text = "Super Cool Team"
+align = 2
+
+[node name="TeamColorLabel" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 40.0
+margin_right = 238.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+text = "Team Color"
+
+[node name="TeamColorPicker" type="ColorPickerButton" parent="VBoxContainer/GridContainer"]
+margin_left = 242.0
+margin_top = 37.0
+margin_right = 498.0
+margin_bottom = 66.0
+size_flags_horizontal = 3
+color = Color( 1, 0.631373, 0, 1 )
+
+[node name="EnemyTeamCountLabel" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 75.0
+margin_right = 238.0
+margin_bottom = 98.0
+size_flags_horizontal = 3
+text = "EnemyTeamCount"
+
+[node name="EnemyTeamCountSelector" type="SpinBox" parent="VBoxContainer/GridContainer"]
+margin_left = 242.0
+margin_top = 70.0
+margin_right = 498.0
+margin_bottom = 103.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 16.0
+value = 1.0
+align = 2
+
+[node name="FaceSelectLabel" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 223.0
+margin_right = 238.0
+margin_bottom = 246.0
+text = "Starting Position"
+
+[node name="ViewportContainer" type="ViewportContainer" parent="VBoxContainer/GridContainer"]
+margin_left = 242.0
+margin_top = 107.0
+margin_right = 498.0
+margin_bottom = 363.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="VBoxContainer/GridContainer/ViewportContainer"]
+size = Vector2( 256, 256 )
+transparent_bg = true
+handle_input_locally = false
+msaa = 4
+render_target_update_mode = 3
+
+[node name="Selection" parent="VBoxContainer/GridContainer/ViewportContainer/Viewport" instance=ExtResource( 4 )]
+inner_radius = 0.3
+outer_radius = 0.4
+
+[node name="Camera" parent="VBoxContainer/GridContainer/ViewportContainer/Viewport" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+current = true
+zoom_ratio = 10.0
+
+[node name="FaceSelector" type="MeshInstance" parent="VBoxContainer/GridContainer/ViewportContainer/Viewport"]
+mesh = ExtResource( 2 )
+material/0 = null
+material/1 = null
+script = ExtResource( 3 )
+
+[node name="StaticBody" type="StaticBody" parent="VBoxContainer/GridContainer/ViewportContainer/Viewport/FaceSelector"]
+
+[node name="CollisionShape" type="CollisionShape" parent="VBoxContainer/GridContainer/ViewportContainer/Viewport/FaceSelector/StaticBody"]
+shape = SubResource( 1 )
+
+[node name="StartButton" type="Button" parent="VBoxContainer"]
+margin_top = 469.0
+margin_right = 498.0
+margin_bottom = 498.0
+size_flags_vertical = 8
+size_flags_stretch_ratio = 1.06
+text = "Start"
+script = ExtResource( 5 )

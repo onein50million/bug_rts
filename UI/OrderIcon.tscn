@@ -4,11 +4,10 @@
 [ext_resource path="res://UI/OrderIcon.gd" type="Script" id=2]
 
 [node name="OrderIcon" type="Button"]
-margin_left = 8.96681
-margin_top = -15.5739
-margin_right = 47.9668
-margin_bottom = 4.42607
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 toggle_mode = true
 group = ExtResource( 1 )
 text = "Test"
@@ -16,5 +15,3 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[connection signal="toggled" from="." to="." method="_on_OrderIcon_toggled"]
