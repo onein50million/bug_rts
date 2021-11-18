@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://models/bug.glb" type="PackedScene" id=1]
+[ext_resource path="res://Selection.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/UnitHelpers/SelectHitbox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Units/bug.gd" type="Script" id=5]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+albedo_color = Color( 1, 0, 0, 1 )
+
+[sub_resource type="CapsuleShape" id=2]
+radius = 0.01
+height = 0.02
+
+[node name="bug" instance=ExtResource( 1 )]
+script = ExtResource( 5 )
+
+[node name="Selection" parent="." index="1" instance=ExtResource( 2 )]
+material = SubResource( 1 )
+
+[node name="Hitbox" type="Area" parent="." index="2"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Hitbox" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, 0 )
+shape = SubResource( 2 )
+
+[node name="SelectHitbox" parent="." index="3" instance=ExtResource( 3 )]

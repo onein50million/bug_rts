@@ -8,11 +8,12 @@ var time = 0.0
 
 var cooldown = 0.0
 
-onready var bug_scene = preload("res://bug.tscn")
-onready var queen_scene = preload("res://bug_queen.tscn")
+onready var bug_scene = preload("res://Units/bug.tscn")
+onready var queen_scene = preload("res://Units/bug_queen.tscn")
+onready var hematoph_scene = preload("res://Units/Buildings/Economy/Hematoph/Hematoph.tscn")
+onready var enzyme_scene = preload("res://Units/Buildings/Economy/EnzymeGland/EnzymeGland.tscn")
 
 export var camera_path: NodePath
-export var ball_path: NodePath
 
 var camera: Camera
 
@@ -132,14 +133,12 @@ func select_units(selection_box: Rect2, team: Globals.Team) -> int:
 			num_selected += int(unit.is_selected)
 	return num_selected
 
-func spawn_bug(position,type,team:Globals.Team):
-	var new_unit
-	match type:
-		Globals.UnitType.Bug:
-			new_unit = bug_scene.instance()
-		Globals.UnitType.Queen:
-			new_unit = queen_scene.instance()
-			team.queen = new_unit
+func spawn_bug(position,type,team:Globals.Team, ghost = null):
+	var new_unit = Globals.unit_scenes[type].instance()
+	if type == Globals.UnitType.Queen:
+		team.queen = new_unit
+	if is_instance_valid(ghost):
+		ghost.queue_free()
 	new_unit.transform.origin = position
 	new_unit.current_face = get_closest_face(position).index
 	new_unit.team = team
@@ -196,11 +195,11 @@ func _unhandled_input(event):
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	print("Creating mesh tool")
-	$CollisionShape.shape = $MeshInstance.mesh.create_trimesh_shape()
+	$CollisionShape.shape = $Armature/Skeleton/Mesh.mesh.create_trimesh_shape()
 	camera = get_node(camera_path)
 	
 	surface_tool = SurfaceTool.new()
-	surface_tool.create_from($MeshInstance.mesh,0)
+	surface_tool.create_from($Armature/Skeleton/Mesh.mesh,0)
 	
 	var array_plane = surface_tool.commit()
 	mesh_tool = MeshDataTool.new()
@@ -223,6 +222,7 @@ func _ready():
 	player_team.color = Globals.player_team_color
 	player_team.team_name = Globals.player_team_name
 	player_team.starting_face = get_closest_face(Globals.player_starting_position).index
+	Globals.player_team = player_team
 	for _team in range(Globals.enemy_team_count):
 		var new_team = Globals.Team.new()
 		new_team.starting_face = randi() % mesh_tool.get_face_count()
@@ -246,11 +246,11 @@ func _ready():
 	for y in range(3):
 		for x in range(4):
 			var new_order_icon:Button = order_icon_scene.instance()
-
 			if x+4*y < Globals.CursorState.size():
 				var state = Globals.CursorState.values()[x+4*y]
-				new_order_icon.cursor_state = state
-				new_order_icon.text = Globals.CursorState.keys()[state]
+				if state in [Globals.CursorState.Select, Globals.CursorState.Move, Globals.CursorState.Attack]:
+					new_order_icon.cursor_state = state
+					new_order_icon.text = Globals.CursorState.keys()[state]
 			elif x == 0 and  y == 2:
 				new_order_icon.text = "Same Type"
 				new_order_icon.command = "same_type_select"
@@ -262,7 +262,7 @@ func _ready():
 			action.action = "grid%d%d"%[x,y]
 			shortcut.shortcut = action
 			new_order_icon.shortcut = shortcut
-			get_parent().get_node("MainUI/Orders").add_child(new_order_icon)
+			get_parent().get_node("MainUI/TabContainer/Orders").add_child(new_order_icon)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

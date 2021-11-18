@@ -1,17 +1,19 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://TeamList.gd" type="Script" id=2]
-[ext_resource path="res://models/person.obj" type="ArrayMesh" id=3]
-[ext_resource path="res://textures/skin2/skin2.tres" type="Material" id=4]
+[ext_resource path="res://person.tscn" type="PackedScene" id=3]
+[ext_resource path="res://EconomyList.gd" type="Script" id=4]
 [ext_resource path="res://WorldEnvironment.gd" type="Script" id=5]
 [ext_resource path="res://Person.gd" type="Script" id=6]
 [ext_resource path="res://Camera.tscn" type="PackedScene" id=7]
 [ext_resource path="res://UI/NotoSans-Regular.ttf" type="DynamicFontData" id=8]
 [ext_resource path="res://SelectionBox.gd" type="Script" id=9]
+[ext_resource path="res://TabContainer.gd" type="Script" id=10]
 
 [sub_resource type="ProceduralSky" id=1]
-ground_bottom_color = Color( 0.647059, 0.839216, 0.945098, 1 )
+sky_top_color = Color( 0.886275, 0.960784, 1, 1 )
+ground_bottom_color = Color( 1, 1, 1, 1 )
 ground_horizon_color = Color( 0.839216, 0.917647, 0.980392, 1 )
 
 [sub_resource type="Environment" id=2]
@@ -27,9 +29,8 @@ dof_blur_near_quality = 2
 bg_color = Color( 0, 0, 0, 0.145098 )
 
 [sub_resource type="DynamicFont" id=4]
-size = 8
-outline_size = 1
-outline_color = Color( 0.203922, 0.203922, 0.203922, 1 )
+size = 10
+outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
 font_data = ExtResource( 8 )
 
@@ -39,19 +40,11 @@ surface_path = NodePath("Person")
 camera_path = NodePath("Camera")
 selection_box_path = NodePath("SelectionBox")
 
-[node name="Person" type="RigidBody" parent="." groups=[
+[node name="Person" parent="." groups=[
 "surface",
-]]
-mode = 1
+] instance=ExtResource( 3 )]
 script = ExtResource( 6 )
 camera_path = NodePath("../Camera")
-
-[node name="MeshInstance" type="MeshInstance" parent="Person"]
-mesh = ExtResource( 3 )
-material/0 = ExtResource( 4 )
-material/1 = null
-
-[node name="CollisionShape" type="CollisionShape" parent="Person"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 2 )
@@ -99,6 +92,7 @@ mouse_filter = 2
 size_flags_vertical = 3
 custom_styles/bg = SubResource( 3 )
 custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_constants/item_margin = 0
 custom_constants/hseparation = 0
 custom_constants/button_margin = 0
@@ -109,14 +103,125 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Orders" type="GridContainer" parent="MainUI"]
+[node name="TabContainer" type="TabContainer" parent="MainUI"]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -110.0
-margin_right = 314.0
+margin_top = -229.0
+margin_right = 441.0
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Orders" type="GridContainer" parent="MainUI/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 41.0
+margin_right = -4.0
+margin_bottom = -4.0
 custom_constants/vseparation = 0
 custom_constants/hseparation = 0
 columns = 4
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Buildings" type="GridContainer" parent="MainUI/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 41.0
+margin_right = -4.0
+margin_bottom = -4.0
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EconomyList" type="GridContainer" parent="MainUI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -304.0
+margin_bottom = 178.0
+mouse_filter = 2
+columns = 2
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BloodAmountLabel" type="Label" parent="MainUI/EconomyList"]
+margin_right = 150.0
+margin_bottom = 41.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Blood Amount"
+
+[node name="BloodAmount" type="Label" parent="MainUI/EconomyList"]
+margin_left = 154.0
+margin_right = 304.0
+margin_bottom = 41.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "69"
+align = 2
+
+[node name="BloodIncomeLabel" type="Label" parent="MainUI/EconomyList"]
+margin_top = 45.0
+margin_right = 150.0
+margin_bottom = 86.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Blood Income"
+
+[node name="BloodIncome" type="Label" parent="MainUI/EconomyList"]
+margin_left = 154.0
+margin_top = 45.0
+margin_right = 304.0
+margin_bottom = 86.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "69"
+align = 2
+
+[node name="EnzymeAmountLabel" type="Label" parent="MainUI/EconomyList"]
+margin_top = 90.0
+margin_right = 150.0
+margin_bottom = 131.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Enzyme Amount"
+
+[node name="EnzymeAmount" type="Label" parent="MainUI/EconomyList"]
+margin_left = 154.0
+margin_top = 90.0
+margin_right = 304.0
+margin_bottom = 131.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "69"
+align = 2
+
+[node name="EnzymeIncomeLabel" type="Label" parent="MainUI/EconomyList"]
+margin_top = 135.0
+margin_right = 150.0
+margin_bottom = 176.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Enzyme Income"
+
+[node name="EnzymeIncome" type="Label" parent="MainUI/EconomyList"]
+margin_left = 154.0
+margin_top = 135.0
+margin_right = 304.0
+margin_bottom = 176.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "69"
+align = 2
+
+[connection signal="tab_changed" from="MainUI/TabContainer" to="MainUI/TabContainer" method="tab_changed"]

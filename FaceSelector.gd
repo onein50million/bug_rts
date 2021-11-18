@@ -1,11 +1,11 @@
-extends MeshInstance
+extends Spatial
 
 onready var camera:Camera = get_parent().get_node("Camera")
 onready var direct_space_state:PhysicsDirectSpaceState = get_world().direct_space_state
 onready var selection = get_parent().get_node("Selection")
 func _ready():
 	set_process_input(true)
-	$StaticBody/CollisionShape.shape = mesh.create_trimesh_shape()
+	$StaticBody/CollisionShape.shape = $Armature/Skeleton/Mesh.mesh.create_trimesh_shape()
 
 func _input(event):
 	if event.is_action_released("left_click"):

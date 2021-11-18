@@ -20,7 +20,7 @@ func _process(_delta):
 	
 	if loader != null:
 		if not load_thread.is_active() and loader.get_stage() < loader.get_stage_count() - 1:
-			print(float(loader.get_stage()) / float(loader.get_stage_count() - 1))
+#			print(float(loader.get_stage()) / float(loader.get_stage_count() - 1))
 			load_thread.start(self, "poll_loader")
 		if not load_thread.is_active() and loader.poll() == ERR_FILE_EOF:
 			var game_scene = loader.get_resource().instance()

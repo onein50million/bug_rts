@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://models/enzyme_gland.glb" type="PackedScene" id=1]
+[ext_resource path="res://Units/Buildings/Economy/EnzymeGland/EnzymeGland.gd" type="Script" id=2]
+[ext_resource path="res://Scenes/UnitHelpers/SelectHitbox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Selection.tscn" type="PackedScene" id=4]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+albedo_color = Color( 1, 0, 0, 1 )
+
+[sub_resource type="CapsuleShape" id=2]
+radius = 0.0357863
+height = 0.0405626
+
+[node name="enzyme_gland" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Selection" parent="." index="1" instance=ExtResource( 4 )]
+inner_radius = 0.04
+outer_radius = 0.05
+material = SubResource( 1 )
+
+[node name="SelectHitbox" parent="." index="2" instance=ExtResource( 3 )]
+
+[node name="Hitbox" type="Area" parent="." index="3"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Hitbox" index="0"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0573011, 0 )
+shape = SubResource( 2 )

@@ -11,7 +11,7 @@ var gimbal_radius = 25.0
 var gimbal_angle = 0.0
 var yaw = 0.0
 var pitch = 0.0
-var height = 10.0
+var height = 1.0
 
 
 export var zoom_ratio = 1.0

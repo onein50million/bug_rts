@@ -6,16 +6,27 @@ var player_starting_position:Vector3
 var player_team_name: String
 var player_team_color: Color
 
+var player_team: Team = null
+
+var main_node: Node = null
+
 enum CursorState{
 	Select, #Default
 	Move,
-	Attack
+	Attack,
+	Build
 }
 var cursor_state = CursorState.Select
 var old_cursor_state
 
-enum UnitType {Bug, Queen, Jump}
-enum OrderType {Move, AttackUnit, AttackMove}
+var selected_build_unit = null
+var build_ghost: Spatial = null
+
+enum UnitType {Bug, Queen, Enzyme, Blood, Factory,}
+
+var unit_lookup = {}
+var unit_scenes = {}
+enum OrderType {Move, AttackUnit, AttackMove, BuildUnit}
 
 class Order:
 	var type
@@ -39,12 +50,21 @@ class Order:
 				}
 			OrderType.AttackMove:
 				data = {} #TBD
+			OrderType.BuildUnit:
+				data = {
+					unit_type = null,
+					position = Vector3.ZERO,
+					ghost = null,
+				}
 	func update_order():
 		match type:
 			OrderType.Move:
 				order_node.transform.origin = data.target
 			OrderType.AttackUnit:
 				order_node.transform.origin = data.target.transform.origin
+			OrderType.BuildUnit:
+				if is_instance_valid(data.ghost):
+					order_node.add_child(data.ghost)
 		order_node.order_type = type
 		order_node.order_data = data
 	
@@ -57,6 +77,10 @@ class Order:
 class Team:
 	var color: Color
 	var team_name: String
+	
+	var blood: float = 0.0
+	var enzymes: float = 0.0
+	
 	var units = []
 	
 	var starting_face
@@ -67,11 +91,12 @@ class Team:
 	var queen_kills = 0
 	
 	const prefix = [
-		"The Super Cool",
-		"The Awesome",
-		"The Lame",
-		"The Retro",
-		"The Crepuscular"
+		"Super Cool",
+		"Awesome",
+		"Lame",
+		"Retro",
+		"Crepuscular",
+		"Slithering",
 	]
 	const stem = [
 		"Bugs",
@@ -81,6 +106,9 @@ class Team:
 		"Creepy Crawlers",
 		"Scorpions",
 		"Ants",
+		"Worms",
+		"Bloodsuckers",
+		"Hunters",
 	]
 		
 	func _init():
@@ -89,7 +117,13 @@ class Team:
 
 
 func _init():
+	unit_scenes[UnitType.Bug] = load("res://Units/bug.tscn")
+	unit_scenes[UnitType.Queen] = load("res://Units/bug_queen.tscn")
+	unit_scenes[UnitType.Blood] = load("res://Units/Buildings/Economy/Hematoph/Hematoph.tscn")
+	unit_scenes[UnitType.Enzyme] = load("res://Units/Buildings/Economy/EnzymeGland/EnzymeGland.tscn")
+	unit_scenes[UnitType.Factory] = load("res://Units/Buildings/Construction/bug_factory.tscn")
 	print("Globals Ready")
+	
 
 func _process(_delta):
 	if old_cursor_state != cursor_state:
@@ -101,3 +135,5 @@ func _process(_delta):
 				Input.set_custom_mouse_cursor(preload("res://Cursors/move.png"))
 			CursorState.Attack:
 				Input.set_custom_mouse_cursor(preload("res://Cursors/attack.png"))
+			CursorState.Build:
+				Input.set_custom_mouse_cursor(preload("res://Cursors/build.png"))
