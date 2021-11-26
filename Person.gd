@@ -114,8 +114,6 @@ func select_closest_unit(mouse_position, team: Globals.Team):
 
 
 func select_units(selection_box: Rect2, team: Globals.Team) -> int:
-	#TODO: don't select occluded units
-	#TODO: hold shift to add selection
 	var num_selected: int = 0
 	for unit in team.units:
 		var viewport_position = camera.unproject_position(unit.transform.origin)
@@ -123,7 +121,8 @@ func select_units(selection_box: Rect2, team: Globals.Team) -> int:
 			unit.is_selected = false
 		if selection_box.has_point(viewport_position):
 			var ray_cast_result = physics_space_state.intersect_ray(
-				camera.transform.origin ,
+				camera.project_ray_origin(viewport_position) ,
+#				unit.transform.origin + unit.transform.basis.y*0.005,
 				unit.transform.origin,
 				[],
 				0b11,
@@ -223,11 +222,15 @@ func _ready():
 	player_team.team_name = Globals.player_team_name
 	player_team.starting_face = get_closest_face(Globals.player_starting_position).index
 	Globals.player_team = player_team
+	
 	for _team in range(Globals.enemy_team_count):
 		var new_team = Globals.Team.new()
 		new_team.starting_face = randi() % mesh_tool.get_face_count()
+		new_team.ai = Globals.AI.new(new_team)
 		teams.append(new_team)
 	for team in teams:
+		if team == player_team and Globals.spectate:
+			continue
 		spawn_bug(Transform(Basis.IDENTITY,get_face_position(team.starting_face)),Globals.UnitType.Queen,team)
 
 	var root = get_parent().get_node("MainUI/TeamList").create_item()

@@ -4,8 +4,8 @@ func _init():
 	self.unit_type = Globals.UnitType.Queen
 	
 	self.speed = 0.02
-	self.max_health = 500.0
-	self.damage = 100.0
+	self.max_health = 300.0
+	self.damage = 10.0
 	self.attack_time = 0.1
 	self.build_range = 0.1
 	self.enzyme_production = 50.0
@@ -15,7 +15,7 @@ func _init():
 	self.num_guts = 100
 	self.gut_velocity = 2.0
 	
-	self.smoothness = 0.99
+	self.smoothness = 0.5
 	
 	self.buildable_units.append_array([Globals.UnitType.Factory,Globals.UnitType.Blood,Globals.UnitType.Enzyme])
 	

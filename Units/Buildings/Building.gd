@@ -8,6 +8,7 @@ func _init():
 	self.smoothness = 0.0
 	self.can_turn = false
 	self.pretty_name = "Building"
+	self.damage = 0.0
 
 
 func die():
@@ -17,4 +18,3 @@ func die():
 func _ready():
 	var astar: AStar = surface.astar
 	astar.set_point_weight_scale(current_face, astar.get_point_weight_scale(current_face) + 100.0)
-	print(astar.get_point_weight_scale(current_face))

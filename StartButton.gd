@@ -25,7 +25,7 @@ func _process(_delta):
 		if not load_thread.is_active() and loader.poll() == ERR_FILE_EOF:
 			var game_scene = loader.get_resource().instance()
 			get_tree().get_root().add_child(game_scene)
-			get_node("/root/Menu").queue_free()
+			get_node("/root/TextureRect").queue_free()
 
 	
 func _pressed():
@@ -33,6 +33,7 @@ func _pressed():
 	Globals.player_team_color = get_parent().get_node("GridContainer/TeamColorPicker").color
 	Globals.player_team_name = get_parent().get_node("GridContainer/TeamNameEdit").text
 	Globals.enemy_team_count = get_parent().get_node("GridContainer/EnemyTeamCountSelector").value
+	Globals.spectate = get_parent().get_node("GridContainer/SpectateBox").pressed
 	text = "Loading..."
 	
 	loader = ResourceLoader.load_interactive("res://Main.tscn")

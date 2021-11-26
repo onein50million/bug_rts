@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/pumping.ogg-c29c4dded33f440b52aa929f854fe14a.oggstr"
+
+[deps]
+
+source_file="res://Sounds/pumping.ogg"
+dest_files=[ "res://.import/pumping.ogg-c29c4dded33f440b52aa929f854fe14a.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Units/Buildings/Economy/Hematoph/Hematoph.gd" type="Script" id=1]
 [ext_resource path="res://models/hematoph.glb" type="PackedScene" id=2]
+[ext_resource path="res://Sounds/pumping.ogg" type="AudioStream" id=3]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=4]
 
 [sub_resource type="SpatialMaterial" id=1]
@@ -35,8 +36,8 @@ transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.00
 shape = SubResource( 2 )
 
 [node name="GhostHitbox" type="Area" parent="." index="4"]
-collision_layer = 2
-collision_mask = 2
+collision_layer = 8
+collision_mask = 8
 
 [node name="CollisionShape" type="CollisionShape" parent="GhostHitbox" index="0"]
 transform = Transform( 2, 0, 0, 0, -8.74228e-08, -2, 0, 2, -8.74228e-08, 0, 0.00506916, 0 )
@@ -48,3 +49,8 @@ collision_mask = 4
 
 [node name="CollisionShape" type="CollisionShape" parent="SelectHitbox" index="0"]
 shape = SubResource( 3 )
+
+[node name="IdleAudio" type="AudioStreamPlayer3D" parent="." index="6"]
+stream = ExtResource( 3 )
+attenuation_model = 1
+autoplay = true

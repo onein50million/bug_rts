@@ -94,12 +94,14 @@ func _enter_tree():
 	for unit_type in Globals.UnitType.values():
 		Globals.unit_lookup[unit_type] = Globals.unit_scenes[unit_type].instance()
 	assert(Globals.unit_lookup.size() == Globals.UnitType.size())
-func _process(_delta):
+func _process(delta):
 #	print(Globals.player_team.blood)
 #	print(Globals.player_team.queen.orders)
 	var alive_team_count = 0
 	var last_alive_team
 	for team in surface.teams:
+		if team.ai != null and is_instance_valid(team.queen):
+			team.ai.process(delta)
 		if is_instance_valid(team.queen):
 			alive_team_count += 1
 			last_alive_team = team

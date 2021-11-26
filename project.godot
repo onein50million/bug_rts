@@ -1103,6 +1103,10 @@ scene={
 "nodes/use_legacy_names": false,
 "skins/use_named_skins": true
 }
+ogg_vorbis={
+"loop": false,
+"loop_offset": 0
+}
 
 [input]
 

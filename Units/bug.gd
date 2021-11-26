@@ -24,7 +24,7 @@ var movement = 0.0
 
 var smoothness = 0.99
 
-var max_health = 100.0
+var max_health = 30.0
 var health
 
 var allocated_enzyme_ratio = 0.0 #Game allocates resources to units so that they can still build while sharing them
@@ -45,6 +45,8 @@ var blood_production = 0.0
 var enzyme_production = 0.0
 
 var camera: Camera
+
+var munch_sound = AudioStreamPlayer3D.new()
 
 var last_damage_source_team: Globals.Team
 onready var surface = get_tree().get_nodes_in_group("surface")[0]
@@ -222,9 +224,9 @@ func process_order(order: Globals.Order, delta) -> bool:
 func die():
 	var splat_sound = AudioStreamPlayer3D.new()
 	splat_sound.stream = preload("res://Sounds/splat.ogg")
-	splat_sound.unit_db = lerp(80,70, camera.zoom_ratio)
+	splat_sound.unit_db = lerp(75,60, camera.zoom_ratio)
 	if unit_type == Globals.UnitType.Queen:
-		splat_sound += 10
+		splat_sound.unit_db += 10
 		splat_sound.bus = "Reverb"
 	get_parent().add_child(splat_sound)
 	splat_sound.play()
@@ -246,8 +248,21 @@ func die():
 	queue_free()
 
 func attack(other:Unit):
-	if current_attack < 0.0 and (other.team != team):
+	if current_attack < 0.0 and (other.team != team) and damage > 0.1:
 #	if current_attack < 0.0 and (other.team != team or friendly_fire_enabled):
+		munch_sound.unit_db = lerp(80,70, camera.zoom_ratio)
+		if unit_type == Globals.UnitType.Queen:
+			munch_sound.unit_db += 10
+			munch_sound.bus = "Reverb"
+		munch_sound.pitch_scale = rand_range(0.9,1.1)
+		munch_sound.play()
+		
+		var bite_effect = preload("res://BiteEffect.tscn").instance()
+		bite_effect.camera = camera
+		bite_effect.world_position = other.transform.origin
+		get_node("/root/Main").add_child(bite_effect)
+		bite_effect.transform.origin = camera.unproject_position(other.transform.origin)
+		
 		current_attack = attack_time*rand_range(0.9,1.1)
 		other.last_damage_source_team = team
 		other.health -= damage*rand_range(0.9,1.1)
@@ -272,7 +287,9 @@ func _ready():
 	assert(has_node("Hitbox"))
 	assert(has_node("SelectHitbox"))
 	assert(has_node("GhostHitbox"))
-#
+	
+	munch_sound.stream = preload("res://Sounds/munch.ogg")
+	add_child(munch_sound)
 #	get_node("GhostHitbox/CollisionShape").shape = get_node("Hitbox/CollisionShape").shape.duplicate()
 #	get_node("GhostHitbox/CollisionShape").transform = get_node("Hitbox/CollisionShape").transform.scaled(Vector3(1.5,1.5,1.5))
 	unit_label = preload("res://UI/UnitLabel.tscn").instance()
@@ -346,7 +363,7 @@ func _process(delta):
 	if can_turn:
 		if random_turn_cooldown	<= 0.0:
 			random_turn_cooldown = 1.0
-			var random_range = 0.05 * movement
+			var random_range = 0.5 * movement
 			random_turn = rand_range(-random_range, random_range)
 		else:
 			random_turn_cooldown -= 1.0 * delta* rand_range(0.5,3.0)
@@ -387,7 +404,7 @@ func _process(delta):
 				has_played_select_noise = true
 	elif has_played_select_noise:
 		has_played_select_noise = false
-		
+	health = min(health + 1.0*delta,max_health)
 func _physics_process(delta):
 #	velocity = Vector3.UP
 #	if velocity.length() > 0.1:

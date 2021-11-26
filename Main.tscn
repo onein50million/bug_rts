@@ -126,7 +126,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Buildings" type="GridContainer" parent="MainUI/TabContainer"]
+[node name="Construction" type="GridContainer" parent="MainUI/TabContainer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0

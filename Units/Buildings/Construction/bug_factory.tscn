@@ -1,7 +1,8 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://models/bug_factory.glb" type="PackedScene" id=1]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Sounds/factory_select.ogg" type="AudioStream" id=3]
 [ext_resource path="res://EnzymeParticles.tscn" type="PackedScene" id=4]
 [ext_resource path="res://BloodParticles.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Units/Buildings/Construction/bug_factory.gd" type="Script" id=6]
@@ -100,3 +101,7 @@ collision_mask = 4
 
 [node name="CollisionShape" type="CollisionShape" parent="SelectHitbox" index="0"]
 shape = SubResource( 13 )
+
+[node name="SelectPlayer" type="AudioStreamPlayer" parent="." index="8"]
+stream = ExtResource( 3 )
+volume_db = -9.134

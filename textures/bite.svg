@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="16"
+   viewBox="0 0 8.4666665 4.2333335"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="bite.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     showguides="false"
+     inkscape:zoom="10.257813"
+     inkscape:cx="5.9954303"
+     inkscape:cy="1.8035034"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#ba0000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 7.7380044,0.78669711 c 0,0 -2.0718129,3.15483049 -3.6755521,3.10774589 C 2.4668497,3.8475973 0.593247,0.593247 0.593247,0.593247 L 1.7691492,0.42860831 1.4418812,1.2896023 2.8361103,0.99400652 2.1861571,2.1609005 3.5747757,1.3678989 3.0574553,3.208975 c 0,0 1.1191959,-1.7863602 1.1100766,-1.6586896 -0.00912,0.1276706 0.419489,1.8501953 0.419489,1.8501953 L 4.8241234,1.4317342 5.892001,2.6194592 5.4807148,1.0122452 6.6793923,1.3741574 6.4874607,0.41231393 Z"
+       id="path956"
+       sodipodi:nodetypes="cacccccccsccccccc"
+       inkscape:export-filename="D:\dev\bug_rts\textures\bite.png"
+       inkscape:export-xdpi="116.69271"
+       inkscape:export-ydpi="116.69271" />
+  </g>
+</svg>
