@@ -1,28 +1,31 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://models/bug.glb" type="PackedScene" id=1]
-[ext_resource path="res://Selection.tscn" type="PackedScene" id=2]
+[ext_resource path="res://models/worker.glb" type="PackedScene" id=1]
+[ext_resource path="res://Units/worker.gd" type="Script" id=2]
 [ext_resource path="res://Sounds/bug_walk.ogg" type="AudioStream" id=4]
-[ext_resource path="res://Units/bug.gd" type="Script" id=5]
-[ext_resource path="res://Sounds/bug_select.ogg" type="AudioStream" id=6]
+[ext_resource path="res://Sounds/bug_select.ogg" type="AudioStream" id=5]
+[ext_resource path="res://Selection.tscn" type="PackedScene" id=6]
+[ext_resource path="res://EnzymeParticles.tscn" type="PackedScene" id=8]
+[ext_resource path="res://BloodParticles.tscn" type="PackedScene" id=9]
 
 [sub_resource type="SpatialMaterial" id=1]
 flags_unshaded = true
 albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="CapsuleShape" id=2]
-radius = 0.00284539
-height = 0.00520184
+radius = 0.00111695
+height = 0.0050198
 
 [sub_resource type="SphereShape" id=3]
-radius = 0.00789307
+radius = 0.00959282
 
-[node name="bug" instance=ExtResource( 1 )]
-script = ExtResource( 5 )
+[node name="worker" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
 
-[node name="Selection" parent="." index="1" instance=ExtResource( 2 )]
-inner_radius = 0.00587867
-outer_radius = 0.0081084
+[node name="Selection" parent="." index="1" instance=ExtResource( 6 )]
+visible = false
+inner_radius = 0.00707362
+outer_radius = 0.00983182
 material = SubResource( 1 )
 
 [node name="Hitbox" type="Area" parent="." index="2"]
@@ -30,26 +33,27 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="Hitbox" index="0"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00222205, 0 )
 shape = SubResource( 2 )
 
 [node name="GhostHitbox" type="Area" parent="." index="3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8.7969e-05, 0, 0 )
 collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="GhostHitbox" index="0"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00222205, 0 )
 shape = SubResource( 2 )
 
 [node name="WalkPlayer" type="AudioStreamPlayer3D" parent="." index="4"]
 stream = ExtResource( 4 )
 
 [node name="SelectPlayer" type="AudioStreamPlayer" parent="." index="5"]
-stream = ExtResource( 6 )
+stream = ExtResource( 5 )
 volume_db = 10.0
 
-[node name="SelectHitbox" type="Area" parent="." index="6"]
+[node name="BloodParticles" parent="." index="6" instance=ExtResource( 9 )]
+
+[node name="EnzymeParticles" parent="." index="7" instance=ExtResource( 8 )]
+
+[node name="SelectHitbox" type="Area" parent="." index="8"]
 collision_layer = 4
 collision_mask = 4
 

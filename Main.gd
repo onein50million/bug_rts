@@ -73,13 +73,13 @@ func _unhandled_input(event):
 								unit.clear_orders()
 							var new_order = Globals.Order.new(Globals.OrderType.BuildUnit, surface)
 							new_order.data.unit_type = Globals.selected_build_unit
-							
 							if Globals.unit_lookup[Globals.selected_build_unit].is_placed:
 								new_order.data.position = Globals.build_ghost.transform.origin
 								new_order.data.ghost = Globals.build_ghost.duplicate()
 							new_order.update_order()
 							unit.new_orders(new_order)
-#							print("build order")
+							if Globals.unit_lookup[Globals.selected_build_unit].is_placed:
+								break
 				
 
 #func _init():
@@ -132,15 +132,6 @@ func _process(_delta):
 		if not raycast_result.empty():
 			Globals.build_ghost.transform.origin = raycast_result.position
 			Globals.build_ghost.transform.basis = Basis(Vector3.UP.cross(raycast_result.normal), raycast_result.normal, Vector3.UP).orthonormalized()
-#			var shapecast_parameters = PhysicsShapeQueryParameters.new()
-#			shapecast_parameters.collide_with_areas = true
-#			shapecast_parameters.collide_with_bodies = false
-#			shapecast_parameters.transform = Globals.build_ghost.transform
-#			var shape = SphereShape.new()
-#			shape.radius = 0.01
-#			shapecast_parameters.set_shape(shape)
-#			var shapecast_result = direct_space_state.intersect_shape(shapecast_parameters, 1)
-#			var can_place = shapecast_result.size() < 1
 			
 			can_place = Globals.build_ghost.get_node("GhostHitbox").get_overlapping_areas().size() < 1
 			
@@ -150,11 +141,13 @@ func _process(_delta):
 
 
 func celebrate(winner: Globals.Team):
+	Engine.time_scale = 0.1
 	celebrated = true
 	$MainUI/WinnerDialog.dialog_text = "Winner is %s" % winner.team_name
 	$MainUI/WinnerDialog.popup_centered()
 
 func tie():
+	Engine.time_scale = 0.1
 	celebrated = true
 	$MainUI/WinnerDialog.dialog_text = "Tie, no winner"
 	$MainUI/WinnerDialog.popup_centered()

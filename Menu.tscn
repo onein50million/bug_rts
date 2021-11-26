@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Camera.tscn" type="PackedScene" id=1]
 [ext_resource path="res://models/person.glb" type="PackedScene" id=2]
 [ext_resource path="res://FaceSelector.gd" type="Script" id=3]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=4]
 [ext_resource path="res://StartButton.gd" type="Script" id=5]
+[ext_resource path="res://Sounds/bug.ogg" type="AudioStream" id=6]
 
 [sub_resource type="ConcavePolygonShape" id=1]
 
@@ -68,7 +69,7 @@ margin_top = 75.0
 margin_right = 238.0
 margin_bottom = 98.0
 size_flags_horizontal = 3
-text = "EnemyTeamCount"
+text = "Enemy Team Count"
 
 [node name="EnemyTeamCountSelector" type="SpinBox" parent="VBoxContainer/GridContainer"]
 margin_left = 242.0
@@ -126,3 +127,8 @@ size_flags_vertical = 8
 size_flags_stretch_ratio = 1.06
 text = "Start"
 script = ExtResource( 5 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+volume_db = -16.0
+autoplay = true

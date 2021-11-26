@@ -3,10 +3,15 @@ extends Spatial
 class_name Unit
 
 var is_selected: bool = false
+var has_played_select_noise: bool = false
 
 var IS_UNIT = true
 
 var is_placed = false
+
+var build_animation_name: String = ""
+var start_animation_name: String = ""
+var idle_animation_name: String = ""
 
 var pretty_name: String = "Bug"
 
@@ -14,7 +19,7 @@ var buildable_units = []
 
 var friendly_fire_enabled = false #so that we can break out when stuck
 
-var speed = 0.5
+var speed = 0.04
 var movement = 0.0
 
 var smoothness = 0.99
@@ -46,7 +51,7 @@ onready var surface = get_tree().get_nodes_in_group("surface")[0]
 var random_turn = 0.0
 var random_turn_cooldown = 1.0
 
-var build_range = 0.5
+var build_range = 0.05
 
 var tangent_space_position: Vector3 = Vector3.ZERO
 var tangent_space_rotation: Quat = Quat(Vector3.FORWARD, 0.0)
@@ -69,10 +74,15 @@ var unit_type = Globals.UnitType.Bug
 
 var unit_label: Control
 var health_bar: ProgressBar
+var construction_bar: ProgressBar
+var num_guts = 10
+var gut_velocity = 0.1
 
 var next_point
 
 func quaternion_look_at(vector: Vector3, up: Vector3) -> Quat:
+	if vector.is_equal_approx(Vector3.ZERO):
+		vector = Vector3.UP
 	var basis = Basis(vector.cross(up),up,vector).orthonormalized()
 	return basis.get_rotation_quat()
 
@@ -136,6 +146,8 @@ func process_order(order: Globals.Order, delta) -> bool:
 	movement = speed/2.0 if current_attack > 0.0 else speed #SPEED if order isn't done yet
 	match order.type:
 		Globals.OrderType.Move:
+			if speed < 0.01:
+				return true 
 			update_path_points(order.data.target)
 			var direction
 			if next_point != null:
@@ -144,7 +156,7 @@ func process_order(order: Globals.Order, delta) -> bool:
 				direction = tangent_transform_inverse * order.data.target - tangent_transform_inverse * transform.origin
 			
 			var distance_to_go = order.data.target.distance_to(transform.origin)
-			var order_complete = distance_to_go < rand_range(0.0,0.1) and randf() > 0.95
+			var order_complete = distance_to_go < rand_range(0.0,0.01) and randf() > 0.95
 			if not order_complete and can_turn:
 				#sometimes direction vector is zero so a small vector needs to be added
 				tangent_space_rotation = tangent_space_rotation.slerp(quaternion_look_at(direction.normalized() + Vector3.ONE * 0.0001 , Vector3.DOWN),0.2)
@@ -163,12 +175,15 @@ func process_order(order: Globals.Order, delta) -> bool:
 				tangent_space_rotation = quaternion_look_at(direction.normalized(), Vector3.DOWN)
 			return false
 		Globals.OrderType.BuildUnit:
+			construction_bar.value = min(stored_blood / Globals.unit_lookup[order.data.unit_type].blood_cost,stored_enzyme / Globals.unit_lookup[order.data.unit_type].enzyme_cost)
 			if not Globals.unit_lookup[order.data.unit_type].is_placed or (Globals.unit_lookup[order.data.unit_type].is_placed and transform.origin.distance_to(order.data.position) < build_range):
 				assert(order.data.unit_type in buildable_units)
 				if has_node("EnzymeParticles"):
 					get_node("EnzymeParticles").emitting = true
 				if has_node("BloodParticles"):
 					get_node("BloodParticles").emitting = true
+				if can_turn:
+					tangent_space_rotation =  quaternion_look_at((tangent_transform_inverse * order.data.position - tangent_transform_inverse * transform.origin).normalized(), Vector3.DOWN)
 				movement = 0.0
 				var used_blood = blood_output * delta * allocated_blood_ratio
 				team.blood -= used_blood
@@ -181,8 +196,8 @@ func process_order(order: Globals.Order, delta) -> bool:
 				stored_enzyme += used_enzyme
 				
 				if stored_blood > Globals.unit_lookup[order.data.unit_type].blood_cost and stored_enzyme > Globals.unit_lookup[order.data.unit_type].enzyme_cost:
-					var spawn_position = transform.origin if not Globals.unit_lookup[order.data.unit_type].is_placed else order.data.ghost.transform.origin
-					surface.spawn_bug(spawn_position,order.data.unit_type, team)
+					var spawn_transform = transform if not Globals.unit_lookup[order.data.unit_type].is_placed else order.data.ghost.transform
+					surface.spawn_bug(spawn_transform,order.data.unit_type, team)
 					stored_blood -= Globals.unit_lookup[order.data.unit_type].blood_cost
 					stored_enzyme -= Globals.unit_lookup[order.data.unit_type].enzyme_cost
 					if has_node("EnzymeParticles"):
@@ -205,6 +220,24 @@ func process_order(order: Globals.Order, delta) -> bool:
 			return true
 
 func die():
+	var splat_sound = AudioStreamPlayer3D.new()
+	splat_sound.stream = preload("res://Sounds/splat.ogg")
+	splat_sound.unit_db = lerp(80,70, camera.zoom_ratio)
+	if unit_type == Globals.UnitType.Queen:
+		splat_sound += 10
+		splat_sound.bus = "Reverb"
+	get_parent().add_child(splat_sound)
+	splat_sound.play()
+	
+	for _i in range(0,num_guts):
+		var gut = preload("res://guts.tscn").instance()
+		get_parent().add_child(gut)
+		gut.transform.origin = transform.origin + transform.basis.y*0.01
+		var velocity_range = gut_velocity
+		gut.linear_velocity += Vector3(rand_range(-velocity_range,velocity_range),rand_range(-velocity_range,velocity_range),rand_range(-velocity_range,velocity_range))
+		var scale_range = 0.1
+		gut.scale = Vector3(rand_range(0.2 - scale_range, 0.2+scale_range),rand_range(0.2 - scale_range, 0.2+scale_range),rand_range(0.2 - scale_range, 0.2+scale_range))
+	
 #	print("DEATH on team: %s" % team.team_name)
 	if last_damage_source_team:
 		last_damage_source_team.bug_kills += 1
@@ -213,32 +246,40 @@ func die():
 	queue_free()
 
 func attack(other:Unit):
-	if current_attack < 0.0 and (other.team != team or friendly_fire_enabled):
+	if current_attack < 0.0 and (other.team != team):
+#	if current_attack < 0.0 and (other.team != team or friendly_fire_enabled):
 		current_attack = attack_time*rand_range(0.9,1.1)
 		other.last_damage_source_team = team
 		other.health -= damage*rand_range(0.9,1.1)
 	
-func _init():
-	if not has_node("GhostHitbox"):
-		var ghost_hitbox = Area.new()
-		ghost_hitbox.name = "GhostHitbox"
-		var collision_shape = CollisionShape.new()
-		var shape = SphereShape.new()
-		shape.radius = 0.05
-		collision_shape.shape = shape
-		ghost_hitbox.add_child(collision_shape)
-		add_child(ghost_hitbox)
+#func _init():
+#	if not has_node("GhostHitbox"):
+#		push_error("GhostHitbox not found, generating")
+#		var ghost_hitbox = Area.new()
+#		ghost_hitbox.collision_layer = 0b1000
+#		ghost_hitbox.collision_mask = 0b1000
+#		ghost_hitbox.name = "GhostHitbox"
+#		var collision_shape = CollisionShape.new()
+#		collision_shape.name = "CollisionShape"
+#		var shape: Shape = SphereShape.new()
+#		collision_shape.shape = shape
+#		ghost_hitbox.add_child(collision_shape)
+#		add_child(ghost_hitbox)
 
 func _ready():
 	health = max_health
 #	current_face = randi() % surface.mesh_tool.get_face_count()
 	assert(has_node("Hitbox"))
 	assert(has_node("SelectHitbox"))
-	
+	assert(has_node("GhostHitbox"))
+#
+#	get_node("GhostHitbox/CollisionShape").shape = get_node("Hitbox/CollisionShape").shape.duplicate()
+#	get_node("GhostHitbox/CollisionShape").transform = get_node("Hitbox/CollisionShape").transform.scaled(Vector3(1.5,1.5,1.5))
 	unit_label = preload("res://UI/UnitLabel.tscn").instance()
 	add_child(unit_label)
 	health_bar = unit_label.get_node("HealthBar")
-	
+	construction_bar = unit_label.get_node("ConstructionBar")
+	unit_label.get_node("TeamIcon").modulate = team.color
 	update_tangent_transform()
 	transform_to_new_face()
 	
@@ -249,23 +290,30 @@ func _ready():
 	tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
 	
 	update_transform(1.0)
+	if start_animation_name != "":
+		$AnimationPlayer.play(start_animation_name)
+	if idle_animation_name != "":
+		$AnimationPlayer.get_animation(idle_animation_name).loop = true
+#		$AnimationPlayer.seek(rand_range(0.0,2.0))
 
-func _enter_tree():
-	var mesh_outline = $Armature/Skeleton/Mesh.mesh.create_outline(0.001)
+#func _enter_tree():
+#	var mesh_outline = $Armature/Skeleton/Mesh.mesh.create_outline(0.0002)
+#
+#	var highlight_mesh = $Armature/Skeleton/Mesh.duplicate()
+#	highlight_mesh.mesh = mesh_outline
+##	highlight_mesh.transform.scaled(Vector3(1.1,1.1,1.1))
+##	highlight_mesh.set_surface_material(0, highlight_mesh.get_active_material(0).duplicate())
+#	var new_material = SpatialMaterial.new()
+#	new_material.flags_unshaded = true
+#	new_material.albedo_color = team.color
+#	highlight_mesh.mesh.surface_set_material(0, new_material)
+#	add_child(highlight_mesh)
 	
-	var highlight_mesh = $Armature/Skeleton/Mesh.duplicate()
-	highlight_mesh.mesh = mesh_outline
-#	highlight_mesh.transform.scaled(Vector3(1.1,1.1,1.1))
-#	highlight_mesh.set_surface_material(0, highlight_mesh.get_active_material(0).duplicate())
-	var new_material = SpatialMaterial.new()
-	new_material.flags_unshaded = true
-	new_material.albedo_color = team.color
-	highlight_mesh.mesh.surface_set_material(0, new_material)
-	add_child(highlight_mesh)
 
 func _process(delta):
-	unit_label.visible = health < max_health
+	health_bar.visible = health < max_health
 	health_bar.value = health / max_health
+	construction_bar.visible = orders.size() > 0 and orders[0].type == Globals.OrderType.BuildUnit
 	if health < 0.0:
 		die()
 	if not is_instance_valid(team.queen) and randf() > 0.99:
@@ -284,6 +332,17 @@ func _process(delta):
 		if process_order(orders[0],delta):
 			var removed_order: Globals.Order= orders.pop_front() #might get slow, should look into
 			removed_order.remove_order()
+	if idle_animation_name != "":
+		if orders.size() < 1:
+			$AnimationPlayer.play(idle_animation_name)
+		else:
+			$AnimationPlayer.stop(false)
+	if build_animation_name != "":
+		if orders.size() > 0 and orders[0].type == Globals.OrderType.BuildUnit:
+			$AnimationPlayer.play(build_animation_name) 
+		else:
+			$AnimationPlayer.stop(false)
+	
 	if can_turn:
 		if random_turn_cooldown	<= 0.0:
 			random_turn_cooldown = 1.0
@@ -316,8 +375,19 @@ func _process(delta):
 		tangent_space_rotation = quaternion_look_at(flat_vector,Vector3.DOWN)
 		update_transform(1.0)
 	
-	unit_label.rect_position = camera.unproject_position(transform.origin)
-
+	unit_label.rect_position = camera.unproject_position(transform.origin + transform.basis.y*0.01)
+	if has_node("WalkPlayer"):
+		$WalkPlayer.playing = movement > 0.1
+		$WalkPlayer.unit_db = lerp(0.0,80, movement/speed)
+	if is_selected:
+		if has_node("SelectPlayer"):
+			if not has_played_select_noise:
+				$SelectPlayer.play(rand_range(0.0,0.1))
+				$SelectPlayer.pitch_scale = rand_range(0.9,1.1)
+				has_played_select_noise = true
+	elif has_played_select_noise:
+		has_played_select_noise = false
+		
 func _physics_process(delta):
 #	velocity = Vector3.UP
 #	if velocity.length() > 0.1:
@@ -330,7 +400,7 @@ func _physics_process(delta):
 #			print("%s vs %s" %[parent.name, name])
 #			var velocity_magnitude = 0.01/(parent.transform.origin.distance_squared_to(transform.origin) + 0.00001)
 			var velocity_direction = -(parent.transform.origin - transform.origin).normalized()
-			var velocity_magnitude = 10.0
+			var velocity_magnitude = 1.0
 			velocity += velocity_direction * velocity_magnitude * 1.0 * delta
 #			tangent_space_rotation = tangent_space_rotation.inverse()
 #			print(velocity_magnitude)

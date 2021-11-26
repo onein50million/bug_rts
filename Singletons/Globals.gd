@@ -12,7 +12,6 @@ var main_node: Node = null
 
 enum CursorState{
 	Select, #Default
-	Move,
 	Attack,
 	Build
 }
@@ -22,7 +21,7 @@ var old_cursor_state
 var selected_build_unit = null
 var build_ghost: Spatial = null
 
-enum UnitType {Bug, Queen, Enzyme, Blood, Factory,}
+enum UnitType {Bug, Queen, Enzyme, Blood, Factory,Worker}
 
 var unit_lookup = {}
 var unit_scenes = {}
@@ -122,6 +121,7 @@ func _init():
 	unit_scenes[UnitType.Blood] = load("res://Units/Buildings/Economy/Hematoph/Hematoph.tscn")
 	unit_scenes[UnitType.Enzyme] = load("res://Units/Buildings/Economy/EnzymeGland/EnzymeGland.tscn")
 	unit_scenes[UnitType.Factory] = load("res://Units/Buildings/Construction/bug_factory.tscn")
+	unit_scenes[UnitType.Worker] = load("res://Units/worker.tscn")
 	print("Globals Ready")
 	
 
@@ -131,8 +131,6 @@ func _process(_delta):
 		match cursor_state:
 			CursorState.Select:
 				Input.set_custom_mouse_cursor(preload("res://Cursors/default.png"))
-			CursorState.Move:
-				Input.set_custom_mouse_cursor(preload("res://Cursors/move.png"))
 			CursorState.Attack:
 				Input.set_custom_mouse_cursor(preload("res://Cursors/attack.png"))
 			CursorState.Build:

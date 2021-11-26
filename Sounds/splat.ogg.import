@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/splat.ogg-5b4856cf3bc52093ffc45c4760a878e0.oggstr"
+
+[deps]
+
+source_file="res://Sounds/splat.ogg"
+dest_files=[ "res://.import/splat.ogg-5b4856cf3bc52093ffc45c4760a878e0.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

@@ -2,14 +2,14 @@
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://TeamList.gd" type="Script" id=2]
-[ext_resource path="res://person.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Surface.tscn" type="PackedScene" id=3]
 [ext_resource path="res://EconomyList.gd" type="Script" id=4]
 [ext_resource path="res://WorldEnvironment.gd" type="Script" id=5]
-[ext_resource path="res://Person.gd" type="Script" id=6]
 [ext_resource path="res://Camera.tscn" type="PackedScene" id=7]
 [ext_resource path="res://UI/NotoSans-Regular.ttf" type="DynamicFontData" id=8]
 [ext_resource path="res://SelectionBox.gd" type="Script" id=9]
 [ext_resource path="res://TabContainer.gd" type="Script" id=10]
+[ext_resource path="res://Sounds/game_sound.ogg" type="AudioStream" id=11]
 
 [sub_resource type="ProceduralSky" id=1]
 sky_top_color = Color( 0.886275, 0.960784, 1, 1 )
@@ -36,14 +36,13 @@ font_data = ExtResource( 8 )
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
-surface_path = NodePath("Person")
+surface_path = NodePath("Surface")
 camera_path = NodePath("Camera")
 selection_box_path = NodePath("SelectionBox")
 
-[node name="Person" parent="." groups=[
+[node name="Surface" parent="." groups=[
 "surface",
 ] instance=ExtResource( 3 )]
-script = ExtResource( 6 )
 camera_path = NodePath("../Camera")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -223,5 +222,10 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "69"
 align = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 11 )
+volume_db = -16.0
+autoplay = true
 
 [connection signal="tab_changed" from="MainUI/TabContainer" to="MainUI/TabContainer" method="tab_changed"]

@@ -23,9 +23,7 @@ var horizontal_sensitivity = 0.5
 
 var alt_vertical_sensitivity = 20.0
 var alt_horizontal_sensitivity = 5.0
-# Called when the node enters the scene t e for the first time.
-func _ready():
-	pass
+
 
 func _input(event):
 	if event.is_action_pressed("middle_click"):
@@ -33,15 +31,15 @@ func _input(event):
 	if event.is_action_released("middle_click"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	if event is InputEventMouseMotion and Input.is_action_pressed("middle_click"):
-		var mouse_x = (event.relative.x / get_viewport().size.x) * clamp(zoom_ratio,0.0, 1.0)
-		var mouse_y = (event.relative.y / get_viewport().size.y) * clamp(zoom_ratio,0.0, 1.0)
+		var mouse_x = (event.relative.x / get_viewport().size.x)
+		var mouse_y = (event.relative.y / get_viewport().size.y)
 		if Input.is_action_pressed("view_modifier"):
 			gimbal_angle -= mouse_x * alt_horizontal_sensitivity
 			height += mouse_y * alt_vertical_sensitivity 
 			pitch = atan2(tan(pitch)*gimbal_radius - (mouse_y * alt_vertical_sensitivity), gimbal_radius)
 		else:
-			yaw += mouse_x * vertical_sensitivity 
-			pitch += mouse_y * horizontal_sensitivity
+			yaw += mouse_x * clamp(zoom_ratio,0.0, 1.0) * vertical_sensitivity 
+			pitch += mouse_y * clamp(zoom_ratio,0.0, 1.0) * horizontal_sensitivity
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

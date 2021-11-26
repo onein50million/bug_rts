@@ -30,3 +30,8 @@ func tab_changed(tab):
 			var new_icon = preload("res://UI/BuildingIcon.tscn").instance()
 			new_icon.unit_type = unit_type
 			$Buildings.add_child(new_icon)
+		for _i in range((4*4) - buildable_units.size()):
+			var blank_icon = Control.new()
+			blank_icon.size_flags_horizontal = SIZE_EXPAND_FILL
+			blank_icon.size_flags_vertical = SIZE_EXPAND_FILL
+			$Buildings.add_child(blank_icon)

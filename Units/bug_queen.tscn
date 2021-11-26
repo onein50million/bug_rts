@@ -1,8 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://models/bug_queen.glb" type="PackedScene" id=1]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Scenes/UnitHelpers/SelectHitbox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Sounds/queen_select.ogg" type="AudioStream" id=3]
 [ext_resource path="res://EnzymeParticles.tscn" type="PackedScene" id=4]
 [ext_resource path="res://BloodParticles.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Units/bug_queen.gd" type="Script" id=6]
@@ -12,28 +12,49 @@ flags_unshaded = true
 albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="CapsuleShape" id=2]
-radius = 0.0357863
-height = 0.0405626
+radius = 0.00703322
+height = 0.00867715
+
+[sub_resource type="SphereShape" id=3]
+radius = 0.0266797
 
 [node name="bug_queen" instance=ExtResource( 1 )]
 script = ExtResource( 6 )
 
 [node name="Selection" parent="." index="1" instance=ExtResource( 2 )]
-inner_radius = 0.08
-outer_radius = 0.09
+inner_radius = 0.01
+outer_radius = 0.012
 material = SubResource( 1 )
 
-[node name="SelectHitbox" parent="." index="2" instance=ExtResource( 3 )]
-
-[node name="Hitbox" type="Area" parent="." index="3"]
+[node name="Hitbox" type="Area" parent="." index="2"]
 collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="Hitbox" index="0"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0573011, 0 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0119629, 0 )
+shape = SubResource( 2 )
+
+[node name="GhostHitbox" type="Area" parent="." index="3"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="GhostHitbox" index="0"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0119629, 0 )
 shape = SubResource( 2 )
 
 [node name="EnzymeParticles" parent="." index="4" instance=ExtResource( 4 )]
+transform = Transform( 0.109041, 0, 0, 0, 0.924926, 0, 0, 0, 1, 0.00990102, 0.0153151, -0.0118697 )
 
 [node name="BloodParticles" parent="." index="5" instance=ExtResource( 5 )]
-emitting = false
+transform = Transform( 0.109041, 0, 0, 0, 0.924926, 0, 0, 0, 1, -0.0111341, 0.0153151, -0.0103065 )
+
+[node name="SelectHitbox" type="Area" parent="." index="6"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape" type="CollisionShape" parent="SelectHitbox" index="0"]
+shape = SubResource( 3 )
+
+[node name="SelectPlayer" type="AudioStreamPlayer" parent="." index="7"]
+stream = ExtResource( 3 )
+volume_db = -5.0

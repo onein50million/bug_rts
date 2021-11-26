@@ -29,7 +29,7 @@ func _process(_delta):
 
 	
 func _pressed():
-	
+	randomize()
 	Globals.player_team_color = get_parent().get_node("GridContainer/TeamColorPicker").color
 	Globals.player_team_name = get_parent().get_node("GridContainer/TeamNameEdit").text
 	Globals.enemy_team_count = get_parent().get_node("GridContainer/EnemyTeamCountSelector").value

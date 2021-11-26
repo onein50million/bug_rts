@@ -2,7 +2,6 @@
 
 [ext_resource path="res://models/enzyme_gland.glb" type="PackedScene" id=1]
 [ext_resource path="res://Units/Buildings/Economy/EnzymeGland/EnzymeGland.gd" type="Script" id=2]
-[ext_resource path="res://Scenes/UnitHelpers/SelectHitbox.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=4]
 
 [sub_resource type="SpatialMaterial" id=1]
@@ -10,23 +9,39 @@ flags_unshaded = true
 albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="CapsuleShape" id=2]
-radius = 0.0357863
-height = 0.0405626
+radius = 0.00173708
+height = 0.002
+
+[sub_resource type="SphereShape" id=3]
+radius = 0.00866709
 
 [node name="enzyme_gland" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
 [node name="Selection" parent="." index="1" instance=ExtResource( 4 )]
-inner_radius = 0.04
-outer_radius = 0.05
+inner_radius = 0.00529701
+outer_radius = 0.00735974
 material = SubResource( 1 )
 
-[node name="SelectHitbox" parent="." index="2" instance=ExtResource( 3 )]
-
-[node name="Hitbox" type="Area" parent="." index="3"]
+[node name="Hitbox" type="Area" parent="." index="2"]
 collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="Hitbox" index="0"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0573011, 0 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.00312079, 0 )
 shape = SubResource( 2 )
+
+[node name="GhostHitbox" type="Area" parent="." index="3"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="GhostHitbox" index="0"]
+transform = Transform( 1.5, 0, 0, 0, -6.55671e-08, -1.5, 0, 1.5, -6.55671e-08, 0, 0.00312079, 0 )
+shape = SubResource( 2 )
+
+[node name="SelectHitbox" type="Area" parent="." index="5"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape" type="CollisionShape" parent="SelectHitbox" index="0"]
+shape = SubResource( 3 )

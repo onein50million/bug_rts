@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/queen_select.ogg-9223c7fbccf0252cf68d3fd170eb20ab.oggstr"
+
+[deps]
+
+source_file="res://Sounds/queen_select.ogg"
+dest_files=[ "res://.import/queen_select.ogg-9223c7fbccf0252cf68d3fd170eb20ab.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0
