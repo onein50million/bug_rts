@@ -2,18 +2,11 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/human-skin-freckled_roughness.png-5fb64bcdedb5ec7f5a3e26e1e4544c0d.s3tc.stex"
-path.etc2="res://.import/human-skin-freckled_roughness.png-5fb64bcdedb5ec7f5a3e26e1e4544c0d.etc2.stex"
-metadata={
-"imported_formats": [ "s3tc", "etc2" ],
-"vram_texture": true
-}
+valid=false
 
 [deps]
 
 source_file="res://textures/skin2/human-skin-freckled_roughness.png"
-dest_files=[ "res://.import/human-skin-freckled_roughness.png-5fb64bcdedb5ec7f5a3e26e1e4544c0d.s3tc.stex", "res://.import/human-skin-freckled_roughness.png-5fb64bcdedb5ec7f5a3e26e1e4544c0d.etc2.stex" ]
-
 [params]
 
 compress/mode=2

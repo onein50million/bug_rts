@@ -2,18 +2,11 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.s3tc.stex"
-path.etc2="res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.etc2.stex"
-metadata={
-"imported_formats": [ "s3tc", "etc2" ],
-"vram_texture": true
-}
+valid=false
 
 [deps]
 
 source_file="res://textures/skin2/human-skin-freckled_albedo.png"
-dest_files=[ "res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.s3tc.stex", "res://.import/human-skin-freckled_albedo.png-6140c4d8b9d6dd72537658a79296a9d5.etc2.stex" ]
-
 [params]
 
 compress/mode=2
