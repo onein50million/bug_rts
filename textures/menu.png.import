@@ -2,11 +2,16 @@
 
 importer="texture"
 type="StreamTexture"
-valid=false
+path="res://.import/menu.png-6afc9033b42af81d0e059f5459163521.stex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://textures/menu.png"
+dest_files=[ "res://.import/menu.png-6afc9033b42af81d0e059f5459163521.stex" ]
+
 [params]
 
 compress/mode=0

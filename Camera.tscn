@@ -1,8 +1,3 @@
-[gd_scene load_steps=2 format=2]
-
-[ext_resource path="res://Camera.gd" type="Script" id=1]
-
-[node name="Camera" type="Camera"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.90735e-06, 13.5715, 34.214 )
-near = 1.0
-script = ExtResource( 1 )
+version https://git-lfs.github.com/spec/v1
+oid sha256:d74b73a4a71bd203af9c0c677f6330ec28fd3167ab373303a11a52f6b999b33b
+size 245

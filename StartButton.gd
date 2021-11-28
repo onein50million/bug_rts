@@ -25,7 +25,7 @@ func _process(_delta):
 		if not load_thread.is_active() and loader.poll() == ERR_FILE_EOF:
 			var game_scene = loader.get_resource().instance()
 			get_tree().get_root().add_child(game_scene)
-			get_node("/root/TextureRect").queue_free()
+			get_node("/root/Menu").queue_free()
 
 	
 func _pressed():

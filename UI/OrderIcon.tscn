@@ -1,17 +1,3 @@
-[gd_scene load_steps=3 format=2]
-
-[ext_resource path="res://UI/OrderIconGroup.tres" type="ButtonGroup" id=1]
-[ext_resource path="res://UI/OrderIcon.gd" type="Script" id=2]
-
-[node name="OrderIcon" type="Button"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-toggle_mode = true
-group = ExtResource( 1 )
-text = "Test"
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ed95abee47630c7e0196fc68fb9dd4996033fb4d5982ecd18222abb1ea8c1221
+size 764

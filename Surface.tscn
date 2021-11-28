@@ -1,12 +1,3 @@
-[gd_scene load_steps=3 format=2]
-
-[ext_resource path="res://Person.gd" type="Script" id=1]
-[ext_resource path="res://person.tscn" type="PackedScene" id=2]
-
-[node name="Surface" type="RigidBody"]
-mode = 1
-script = ExtResource( 1 )
-
-[node name="person" parent="." instance=ExtResource( 2 )]
-
-[node name="CollisionShape" type="CollisionShape" parent="."]
+version https://git-lfs.github.com/spec/v1
+oid sha256:91b2c36d656c8db2a7a82594409e1e2983f00b8179d806a12809050785795e44
+size 352

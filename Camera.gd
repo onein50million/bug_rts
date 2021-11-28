@@ -14,7 +14,7 @@ var pitch = 0.0
 var height = 1.0
 
 
-export var zoom_ratio = 1.0
+export var zoom_ratio = 0.2
 var camera_position = transform.origin
 
 
@@ -48,7 +48,7 @@ func _process(delta):
 	gimbal_angle += (int(Input.is_action_pressed("camera_right")) - int(Input.is_action_pressed("camera_left"))) * 2.0 * delta
 	camera_position = Quat(Vector3(0.0,gimbal_angle, 0.0)) * Vector3(0.0, height, gimbal_radius)
 	
-	var angular_size = PI/32.0
+	var angular_size = PI/8.0
 	if not target_path.is_empty():
 		var target = get_node(target_path)
 		var target_position = target.transform.origin
@@ -61,7 +61,7 @@ func _process(delta):
 		transform.basis *= Basis(Vector3(pitch,yaw, 0.0))
 	var zoom_input = int(Input.is_action_just_released("zoom_out")) - int(Input.is_action_just_released("zoom_in"))
 	zoom_ratio *= 1.0 + float(zoom_input) * 0.3
-	
+	zoom_ratio = clamp(zoom_ratio,0.00001,1.0)
 
 
 	var new_fov = rad2deg(angular_size*zoom_ratio)

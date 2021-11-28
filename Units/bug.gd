@@ -150,7 +150,10 @@ func process_order(order: Globals.Order, delta) -> bool:
 		Globals.OrderType.Move:
 			if speed < 0.01:
 				return true 
-			update_path_points(order.data.target)
+			
+			var distance_to_next_point = next_point.distance_to(transform.origin) if next_point != null else 0.0
+			if distance_to_next_point < 0.01:
+				update_path_points(order.data.target)
 			var direction
 			if next_point != null:
 				direction = tangent_transform_inverse * next_point - tangent_transform_inverse * transform.origin
@@ -167,7 +170,9 @@ func process_order(order: Globals.Order, delta) -> bool:
 			if not is_instance_valid(order.data.target):
 				friendly_fire_enabled = false
 				return true
-			update_path_points(order.data.target.transform.origin)
+			var distance_to_next_point = next_point.distance_to(transform.origin) if next_point != null else 0.0
+			if distance_to_next_point < 0.01:
+				update_path_points(order.data.target.transform.origin)
 			var direction
 			if next_point != null:
 				direction = tangent_transform_inverse * next_point - tangent_transform_inverse * transform.origin
@@ -208,7 +213,10 @@ func process_order(order: Globals.Order, delta) -> bool:
 						get_node("BloodParticles").emitting = false
 					return true
 			elif Globals.unit_lookup[order.data.unit_type].is_placed: #If we aren't close enough to place it
-				update_path_points(order.data.position)
+				
+				var distance_to_next_point = next_point.distance_to(transform.origin) if next_point != null else 0.0
+				if distance_to_next_point < 0.01:
+					update_path_points(order.data.position)
 				var direction
 				if next_point != null:
 					direction = tangent_transform_inverse * next_point - tangent_transform_inverse * transform.origin
@@ -259,7 +267,7 @@ func attack(other:Unit):
 		
 		var bite_effect = preload("res://BiteEffect.tscn").instance()
 		bite_effect.camera = camera
-		bite_effect.world_position = other.transform.origin
+		bite_effect.world_position = (other.transform.origin + transform.origin)/2.0
 		get_node("/root/Main").add_child(bite_effect)
 		bite_effect.transform.origin = camera.unproject_position(other.transform.origin)
 		

@@ -2,11 +2,13 @@
 
 importer="ogg_vorbis"
 type="AudioStreamOGGVorbis"
-valid=false
+path="res://.import/bug.ogg-e19a7c7957ce48005dc0465b3af78239.oggstr"
 
 [deps]
 
 source_file="res://Sounds/bug.ogg"
+dest_files=[ "res://.import/bug.ogg-e19a7c7957ce48005dc0465b3af78239.oggstr" ]
+
 [params]
 
 loop=true

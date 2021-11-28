@@ -39,6 +39,7 @@ config/icon="res://icon.png"
 [autoload]
 
 Globals="*res://Singletons/Globals.gd"
+HelpButton="*res://HelpButton.tscn"
 
 [display]
 

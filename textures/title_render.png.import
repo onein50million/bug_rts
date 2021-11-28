@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/human-skin-freckled_height.png-24623f90e75b03e3cd2600e03c024f1b.stex"
+path="res://.import/title_render.png-b54eb8246319436a2ce67228b5137e85.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/skin2/human-skin-freckled_height.png"
-dest_files=[ "res://.import/human-skin-freckled_height.png-24623f90e75b03e3cd2600e03c024f1b.stex" ]
+source_file="res://textures/title_render.png"
+dest_files=[ "res://.import/title_render.png-b54eb8246319436a2ce67228b5137e85.stex" ]
 
 [params]
 

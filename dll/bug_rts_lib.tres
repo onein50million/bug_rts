@@ -1,5 +1,9 @@
 [gd_resource type="GDNativeLibrary" format=2]
 
 [resource]
+entry/OSX.64 = "res://dll/libbug_rts_lib.dylib"
 entry/Windows.64 = "res://dll/bug_rts_lib.dll"
+entry/X11.64 = "res://dll/libbug_rts_lib.so"
+dependency/OSX.64 = [  ]
 dependency/Windows.64 = [  ]
+dependency/X11.64 = [  ]
